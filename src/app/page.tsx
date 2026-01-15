@@ -1,65 +1,54 @@
-import Image from "next/image";
-
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <section className="relative min-h-[calc(100vh-64px)] flex items-center bg-gradient-to-br from-sky-300 via-sky-400 to-blue-400 overflow-hidden">
+    
+      <div className="absolute -top-24 -left-24 w-96 h-96 bg-white/20 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl" />
+
+      <div className="relative container mx-auto px-12 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        
+        <div>
+          <span className="inline-block mb-4 px-4 py-1 bg-white/70 text-blue-600 font-semibold rounded-full text-sm shadow">
+            🚀 Laundry Digital Modern
+          </span>
+
+          <h2 className="text-4xl md:text-6xl font-extrabold text-white leading-tight drop-shadow">
+            Laundry Jadi <br />
+            Lebih <span className="text-blue-900">Mudah</span> <br />
+            dengan <span className="text-blue-900">LaundryGo</span>
+          </h2>
+
+          <p className="mt-6 text-white/90 max-w-md text-lg">
+            Solusi laundry antar jemput dengan sistem tracking online.
+            Hemat waktu, proses cepat, dan pelayanan terpercaya.
           </p>
+
+          <div className="mt-10 flex flex-wrap gap-4">
+            <button className="px-8 py-3 bg-blue-700 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-800 hover:scale-105 transition">
+              Coba Sekarang
+            </button>
+            <button className="px-8 py-3 bg-white/80 text-blue-700 font-semibold rounded-lg shadow hover:bg-white transition">
+              Pelajari Lebih Lanjut
+            </button>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="hidden md:flex justify-center">
+          <div className="w-80 h-80 bg-white/80 backdrop-blur rounded-3xl shadow-2xl p-8 flex flex-col justify-center gap-4">
+            <h3 className="text-xl font-bold text-blue-700 mb-2 text-center">
+              Kenapa LaundryGo?
+            </h3>
+
+            <div className="space-y-3 text-slate-700 font-medium">
+              <p>🧺 Antar Jemput Laundry</p>
+              <p>📍 Tracking Online Real-time</p>
+              <p>⚡ Proses Cepat & Tepat Waktu</p>
+              <p>💙 Pelayanan Aman & Terpercaya</p>
+            </div>
+          </div>
         </div>
-      </main>
-    </div>
-  );
+
+      </div>
+    </section>
+  )
 }
