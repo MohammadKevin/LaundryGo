@@ -1,7 +1,9 @@
+import Link from 'next/link'
+
 export default function HomePage() {
   return (
     <section className="relative min-h-[calc(100vh-64px)] flex items-center bg-gradient-to-br from-sky-300 via-sky-400 to-blue-400 overflow-hidden">
-    
+      
       <div className="absolute -top-24 -left-24 w-96 h-96 bg-white/20 rounded-full blur-3xl" />
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl" />
 
@@ -24,12 +26,19 @@ export default function HomePage() {
           </p>
 
           <div className="mt-10 flex flex-wrap gap-4">
-            <button className="px-8 py-3 bg-blue-700 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-800 hover:scale-105 transition">
+            <Link
+              href="/login"
+              className="px-8 py-3 bg-blue-700 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-800 hover:scale-105 transition"
+            >
               Coba Sekarang
-            </button>
-            <button className="px-8 py-3 bg-white/80 text-blue-700 font-semibold rounded-lg shadow hover:bg-white transition">
+            </Link>
+
+            <Link
+              href="#"
+              className="px-8 py-3 bg-white/80 text-blue-700 font-semibold rounded-lg shadow hover:bg-white transition"
+            >
               Pelajari Lebih Lanjut
-            </button>
+            </Link>
           </div>
         </div>
 
