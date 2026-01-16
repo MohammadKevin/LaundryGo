@@ -1,5 +1,4 @@
 import './globals.css'
-import Navbar from '../../components/Navbar'
 
 export const metadata = {
   title: 'LaundryGo',
@@ -13,13 +12,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id">
-      <body>
-        <Navbar />
-        <main>{children}</main>
-
-        <footer className="bg-white text-center py-4 text-sm text-slate-500">
-          © {new Date().getFullYear()} LaundryGo — Developed by <span className="font-semibold">Mohammad Kevin</span>
-        </footer>
+      <body className="bg-sky-100">
+        {children}
       </body>
     </html>
   )
