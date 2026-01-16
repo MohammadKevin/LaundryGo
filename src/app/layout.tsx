@@ -1,4 +1,5 @@
 import './globals.css'
+import LayoutClient from './layout-client'
 
 export const metadata = {
   title: 'LaundryGo',
@@ -12,8 +13,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="id">
-      <body className="bg-sky-100">
-        {children}
+      <body className="bg-sky-200">
+        <LayoutClient>
+          {children}
+        </LayoutClient>
       </body>
     </html>
   )
