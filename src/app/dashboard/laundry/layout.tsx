@@ -2,23 +2,44 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { Menu, X } from 'lucide-react'
 
-export default function StaffLayout({
+export default function LaundryLayout({
     children,
 }: {
     children: React.ReactNode
 }) {
     const [open, setOpen] = useState(false)
+    const pathname = usePathname()
     const router = useRouter()
 
     const handleLogout = () => {
-        router.push('http://localhost:3000/')
+        router.push('/')
     }
+
+    const menus = [
+        {
+            label: 'Dashboard',
+            href: '/dashboard/laundry',
+        },
+        {
+            label: 'Order Masuk',
+            href: '/dashboard/laundry/order-masuk',
+        },
+        {
+            label: 'Proses Laundry',
+            href: '/dashboard/laundry/proses',
+        },
+        {
+            label: 'Selesai',
+            href: '/dashboard/laundry/selesai',
+        },
+    ]
 
     return (
         <div className="h-screen bg-sky-200 overflow-hidden">
+            {/* MOBILE HEADER */}
             <header className="md:hidden fixed top-0 left-0 right-0 z-30 bg-white px-4 py-3 shadow flex items-center justify-between">
                 <button onClick={() => setOpen(true)}>
                     <Menu />
@@ -29,16 +50,21 @@ export default function StaffLayout({
             </header>
 
             <div className="flex h-full pt-14 md:pt-0">
+                {/* DESKTOP SIDEBAR */}
                 <aside className="hidden md:flex w-64 bg-gradient-to-b from-cyan-400 to-blue-600 text-white flex-col">
                     <div className="px-6 py-6 text-2xl font-extrabold tracking-wide border-b border-white/20">
                         LaundryGo
                     </div>
 
                     <nav className="flex-1 px-3 py-4 space-y-1 text-sm">
-                        <SidebarItem label="Dashboard" active />
-                        <SidebarItem label="Order Masuk" />
-                        <SidebarItem label="Proses Laundry" />
-                        <SidebarItem label="Selesai" />
+                        {menus.map((menu) => (
+                            <SidebarItem
+                                key={menu.href}
+                                label={menu.label}
+                                href={menu.href}
+                                active={pathname === menu.href}
+                            />
+                        ))}
                     </nav>
 
                     <div className="p-4 border-t border-white/20">
@@ -51,6 +77,7 @@ export default function StaffLayout({
                     </div>
                 </aside>
 
+                {/* MOBILE SIDEBAR */}
                 {open && (
                     <>
                         <div
@@ -67,10 +94,15 @@ export default function StaffLayout({
                             </div>
 
                             <nav className="flex-1 px-3 py-4 space-y-1 text-sm">
-                                <SidebarItem label="Dashboard" active onClick={() => setOpen(false)} />
-                                <SidebarItem label="Order Masuk" onClick={() => setOpen(false)} />
-                                <SidebarItem label="Proses Laundry" onClick={() => setOpen(false)} />
-                                <SidebarItem label="Selesai" onClick={() => setOpen(false)} />
+                                {menus.map((menu) => (
+                                    <SidebarItem
+                                        key={menu.href}
+                                        label={menu.label}
+                                        href={menu.href}
+                                        active={pathname === menu.href}
+                                        onClick={() => setOpen(false)}
+                                    />
+                                ))}
                             </nav>
 
                             <div className="p-4 border-t border-white/20">
@@ -85,6 +117,7 @@ export default function StaffLayout({
                     </>
                 )}
 
+                {/* CONTENT */}
                 <main className="flex-1 overflow-y-auto p-4 md:p-8">
                     {children}
                 </main>
@@ -95,16 +128,18 @@ export default function StaffLayout({
 
 function SidebarItem({
     label,
+    href,
     active,
     onClick,
 }: {
     label: string
+    href: string
     active?: boolean
     onClick?: () => void
 }) {
     return (
         <Link
-            href="#"
+            href={href}
             onClick={onClick}
             className={`block px-4 py-3 rounded-xl font-medium transition ${
                 active
