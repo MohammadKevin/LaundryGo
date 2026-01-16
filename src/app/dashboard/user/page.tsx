@@ -1,98 +1,157 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
-const laundryHistory = [
-    { date: '12/01/2026', order: 'LG-00421', service: 'Cuci + Setrika', status: 'Selesai', total: 'Rp 25.000' },
-    { date: '10/01/2026', order: 'LG-00412', service: 'Cuci Kering', status: 'Selesai', total: 'Rp 18.000' },
-]
+type Order = {
+    noAntrian: string
+    noOrder: string
+    nama: string
+    layanan: string
+    berat: string
+    totalHarga: string
+    status: string
+}
 
 export default function UserDashboardPage() {
-    const [search, setSearch] = useState('')
+    const [activeOrders, setActiveOrders] = useState<Order[]>([])
+    const [historyOrders, setHistoryOrders] = useState<Order[]>([])
 
-    const filtered = laundryHistory.filter(item =>
-        Object.values(item).join(' ').toLowerCase().includes(search.toLowerCase())
-    )
+    const userName = 'Kevin'
+
+    useEffect(() => {
+        const sync = () => {
+            const process: Order[] = JSON.parse(
+                localStorage.getItem('laundry_process_orders') || '[]'
+            ).filter((o: Order) => o.nama === userName)
+
+            const done: Order[] = JSON.parse(
+                localStorage.getItem('laundry_done_orders') || '[]'
+            ).filter((o: Order) => o.nama === userName)
+
+            setActiveOrders(process)
+            setHistoryOrders(done)
+        }
+
+        sync()
+        const interval = setInterval(sync, 1000)
+        return () => clearInterval(interval)
+    }, [])
 
     return (
-        <div className="space-y-8">
-            <div>
-                <h2 className="text-2xl md:text-3xl font-bold text-slate-900">
-                    Halo, Kevin 👋
-                </h2>
-                <p className="text-slate-700">
-                    Selamat datang kembali di LaundryGo
+        <div className="space-y-12 text-slate-900">
+            {/* HEADER */}
+            <div className="bg-gradient-to-r from-cyan-600 to-sky-700 rounded-3xl p-8 text-white shadow-xl">
+                <h1 className="text-3xl font-extrabold">
+                    Halo, {userName} 👋
+                </h1>
+                <p className="text-cyan-100 mt-1 font-medium">
+                    Pantau status laundry kamu secara realtime
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <StatCard title="Order Aktif" value="1" />
-                <StatCard title="Order Selesai" value="12" />
-                <StatCard title="Total Pengeluaran" value="Rp 320.000" />
-            </div>
+            {/* LAUNDRY AKTIF */}
+            <section>
+                <h2 className="text-2xl font-extrabold text-slate-900 mb-5">
+                    Laundry Aktif
+                </h2>
 
-            <div className="bg-white rounded-2xl shadow-xl p-6">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
-                    <h3 className="text-lg font-semibold text-slate-900">
-                        Riwayat Laundry
-                    </h3>
+                {activeOrders.length === 0 ? (
+                    <div className="bg-white rounded-2xl p-6 shadow text-slate-600 font-medium">
+                        Tidak ada laundry yang sedang diproses
+                    </div>
+                ) : (
+                    <div className="grid md:grid-cols-2 gap-6">
+                        {activeOrders.map((o, i) => (
+                            <div
+                                key={i}
+                                className="bg-white rounded-3xl shadow-xl p-6 border-l-8 border-cyan-600"
+                            >
+                                <div className="flex justify-between items-center mb-3">
+                                    <span className="text-xl font-extrabold text-cyan-700">
+                                        {o.noAntrian}
+                                    </span>
+                                    <span className="text-sm font-medium text-slate-600">
+                                        {o.noOrder}
+                                    </span>
+                                </div>
 
-                    <input
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        placeholder="Cari riwayat..."
-                        className="w-full md:w-72 px-3 py-2 border rounded-lg text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                    />
-                </div>
+                                <p className="font-extrabold text-slate-900 text-lg">
+                                    {o.layanan}
+                                </p>
 
-                <div className="hidden md:block overflow-x-auto border rounded-xl">
-                    <table className="w-full text-sm">
-                        <thead className="bg-slate-100 text-slate-900">
-                            <tr>
-                                <th className="p-3 text-left">Tanggal</th>
-                                <th className="p-3 text-left">No Order</th>
-                                <th className="p-3 text-left">Layanan</th>
-                                <th className="p-3 text-left">Status</th>
-                                <th className="p-3 text-left">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filtered.map((item, i) => (
-                                <tr key={i} className="border-t">
-                                    <td className="p-3 text-slate-800">{item.date}</td>
-                                    <td className="p-3 font-medium text-slate-900">{item.order}</td>
-                                    <td className="p-3 text-slate-800">{item.service}</td>
-                                    <td className="p-3 text-green-600 font-semibold">{item.status}</td>
-                                    <td className="p-3 font-semibold text-slate-900">{item.total}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                                <div className="mt-2 space-y-1 text-sm font-medium text-slate-700">
+                                    <p>Berat: {o.berat} Kg</p>
+                                    <p>Total: Rp {o.totalHarga}</p>
+                                </div>
 
-                <div className="md:hidden space-y-3">
-                    {filtered.map((item, i) => (
-                        <div key={i} className="border rounded-xl p-4">
-                            <p className="font-semibold text-slate-900">{item.order}</p>
-                            <p className="text-sm text-slate-700">{item.service}</p>
-                            <p className="text-xs text-slate-500">{item.date}</p>
-                            <div className="flex justify-between mt-2">
-                                <span className="text-green-600 font-semibold">{item.status}</span>
-                                <span className="font-semibold text-slate-900">{item.total}</span>
+                                <span className="inline-block mt-5 px-4 py-1 rounded-full text-sm font-extrabold bg-blue-100 text-blue-700">
+                                    {o.status}
+                                </span>
                             </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </div>
-    )
-}
+                        ))}
+                    </div>
+                )}
+            </section>
 
-function StatCard({ title, value }: { title: string; value: string }) {
-    return (
-        <div className="bg-white rounded-xl p-4 shadow">
-            <p className="text-sm text-slate-600">{title}</p>
-            <p className="text-2xl font-bold text-cyan-600">{value}</p>
+            {/* RIWAYAT */}
+            <section>
+                <h2 className="text-2xl font-extrabold text-slate-900 mb-5">
+                    Riwayat Laundry
+                </h2>
+
+                {historyOrders.length === 0 ? (
+                    <div className="bg-white rounded-2xl p-6 shadow text-slate-600 font-medium">
+                        Belum ada riwayat laundry
+                    </div>
+                ) : (
+                    <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+                        <table className="w-full text-sm text-slate-900">
+                            <thead className="bg-slate-100">
+                                <tr className="font-bold">
+                                    <th className="px-6 py-4 text-left">
+                                        No Antrian
+                                    </th>
+                                    <th className="text-left">No Order</th>
+                                    <th className="text-left">Layanan</th>
+                                    <th className="text-left">Berat</th>
+                                    <th className="text-left">Total</th>
+                                    <th className="text-left">Status</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {historyOrders.map((o, i) => (
+                                    <tr
+                                        key={i}
+                                        className="border-t hover:bg-slate-50 transition"
+                                    >
+                                        <td className="px-6 py-4 font-extrabold text-slate-900">
+                                            {o.noAntrian}
+                                        </td>
+                                        <td className="font-semibold">
+                                            {o.noOrder}
+                                        </td>
+                                        <td className="font-medium">
+                                            {o.layanan}
+                                        </td>
+                                        <td className="font-medium">
+                                            {o.berat} Kg
+                                        </td>
+                                        <td className="font-extrabold">
+                                            Rp {o.totalHarga}
+                                        </td>
+                                        <td>
+                                            <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-green-100 text-green-700">
+                                                {o.status}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+            </section>
         </div>
     )
 }
