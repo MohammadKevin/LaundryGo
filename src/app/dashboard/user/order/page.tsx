@@ -2,93 +2,130 @@
 
 import { useState } from 'react'
 
-export default function UserOrderPage() {
-    const [cabang, setCabang] = useState('')
-    const [layanan, setLayanan] = useState('')
-    const [berat, setBerat] = useState('')
-    const [pembayaran, setPembayaran] = useState('Cash')
+type PaymentMethod = 'Cash' | 'QRIS'
+type OrderStatus = 'Menunggu Konfirmasi Staff'
 
-    const handleSubmit = () => {
-        if (!cabang || !layanan || !berat) {
-            alert('Lengkapi data terlebih dahulu')
+interface LaundryOrder {
+    id: string
+    nama: string
+    alamat: string
+    cabang: string
+    layanan: string
+    estimasiBerat: string
+    pembayaran: PaymentMethod
+    status: OrderStatus
+    createdAt: string
+}
+
+export default function UserOrderPage() {
+    const [cabang, setCabang] = useState<string>('')
+    const [layanan, setLayanan] = useState<string>('')
+    const [estimasiBerat, setEstimasiBerat] = useState<string>('')
+    const [pembayaran, setPembayaran] =
+        useState<PaymentMethod>('Cash')
+
+    const handleSubmit = (): void => {
+        if (!cabang || !layanan || !estimasiBerat) {
+            alert('Lengkapi data pesanan')
             return
         }
 
-        const existing = JSON.parse(
-            localStorage.getItem('laundry_incoming_orders') || '[]'
-        )
+        const stored = localStorage.getItem('laundry_orders')
+        const orders: LaundryOrder[] = stored
+            ? (JSON.parse(stored) as LaundryOrder[])
+            : []
 
-        const newOrder = {
+        const newOrder: LaundryOrder = {
             id: `LG-${Date.now()}`,
-            tanggal: new Date().toLocaleDateString('id-ID'),
             nama: 'Kevin',
+            alamat: 'Jl. Melati No. 10',
             cabang,
             layanan,
-            estimasiBerat: berat,
+            estimasiBerat,
             pembayaran,
-            status: 'Menunggu Konfirmasi',
+            status: 'Menunggu Konfirmasi Staff',
+            createdAt: new Date().toISOString(),
         }
 
         localStorage.setItem(
-            'laundry_incoming_orders',
-            JSON.stringify([...existing, newOrder])
+            'laundry_orders',
+            JSON.stringify([...orders, newOrder])
         )
 
-        alert('Pesanan berhasil dikirim ke laundry')
+        alert('Pesanan berhasil dikirim')
 
         setCabang('')
         setLayanan('')
-        setBerat('')
+        setEstimasiBerat('')
         setPembayaran('Cash')
     }
 
-    const inputClass =
-        'w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500'
-
     return (
-        <div className="max-w-xl space-y-6 bg-white p-6 rounded-2xl shadow">
-            <h1 className="text-2xl font-extrabold text-slate-900">
+        <div className="max-w-xl bg-white p-8 rounded-3xl shadow-lg space-y-6 ml-8 mt-8">
+            <h1 className="text-2xl font-extrabold text-slate-800">
                 Pesan Laundry
             </h1>
 
-            <input
-                value={cabang}
-                onChange={(e) => setCabang(e.target.value)}
-                placeholder="Cabang Laundry"
-                className={inputClass}
-            />
+            <div className="space-y-1">
+                <label className="text-sm font-medium text-slate-600">
+                    Cabang Laundry
+                </label>
+                <input
+                    className="w-full px-4 py-3 border rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    placeholder="Contoh: LaundryGo Sukamaju"
+                    value={cabang}
+                    onChange={(e) => setCabang(e.target.value)}
+                />
+            </div>
 
-            <select
-                value={layanan}
-                onChange={(e) => setLayanan(e.target.value)}
-                className={inputClass}
-            >
-                <option value="">Pilih Layanan</option>
-                <option>Cuci + Lipat</option>
-                <option>Cuci + Setrika</option>
-                <option>Setrika Saja</option>
-            </select>
+            <div className="space-y-1">
+                <label className="text-sm font-medium text-slate-600">
+                    Layanan
+                </label>
+                <select
+                    className="w-full px-4 py-3 border rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    value={layanan}
+                    onChange={(e) => setLayanan(e.target.value)}
+                >
+                    <option value="">Pilih Layanan</option>
+                    <option value="Cuci + Lipat">Cuci + Lipat</option>
+                    <option value="Cuci + Setrika">Cuci + Setrika</option>
+                    <option value="Setrika Saja">Setrika Saja</option>
+                </select>
+            </div>
 
-            <input
-                value={berat}
-                onChange={(e) => setBerat(e.target.value)}
-                placeholder="Perkiraan Berat (Kg)"
-                type="number"
-                className={inputClass}
-            />
+            <div className="space-y-1">
+                <label className="text-sm font-medium text-slate-600">
+                    Estimasi Berat (Kg)
+                </label>
+                <input
+                    type="number"
+                    className="w-full px-4 py-3 border rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    placeholder="Contoh: 3"
+                    value={estimasiBerat}
+                    onChange={(e) => setEstimasiBerat(e.target.value)}
+                />
+            </div>
 
-            <select
-                value={pembayaran}
-                onChange={(e) => setPembayaran(e.target.value)}
-                className={inputClass}
-            >
-                <option>Cash</option>
-                <option>QRIS</option>
-            </select>
+            <div className="space-y-1">
+                <label className="text-sm font-medium text-slate-600">
+                    Metode Pembayaran
+                </label>
+                <select
+                    className="w-full px-4 py-3 border rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    value={pembayaran}
+                    onChange={(e) =>
+                        setPembayaran(e.target.value as PaymentMethod)
+                    }
+                >
+                    <option value="Cash">Cash</option>
+                    <option value="QRIS">QRIS</option>
+                </select>
+            </div>
 
             <button
                 onClick={handleSubmit}
-                className="w-full rounded-xl bg-cyan-600 py-3 font-bold text-white hover:bg-cyan-700 transition"
+                className="w-full py-3 rounded-xl bg-cyan-600 text-white font-bold hover:bg-cyan-700 transition"
             >
                 Kirim Pesanan
             </button>

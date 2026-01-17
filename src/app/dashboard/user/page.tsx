@@ -2,156 +2,222 @@
 
 import { useEffect, useState } from 'react'
 
-type Order = {
-    noAntrian: string
-    noOrder: string
+type PaymentMethod = 'Cash' | 'QRIS'
+
+type OrderStatus =
+    | 'Menunggu Konfirmasi Staff'
+    | 'Menunggu Pick Up Kurir'
+    | 'Kurir Menuju Lokasi Pickup'
+    | 'Dalam Perjalanan ke Laundry'
+    | 'Menunggu Penimbangan'
+    | 'Menunggu Pembayaran'
+    | 'Menunggu Antrian'
+    | 'Sedang Dicuci'
+    | 'Sedang Dikeringkan'
+    | 'Sedang Disetrika'
+    | 'Siap Diantar'
+    | 'Diantar ke Pelanggan'
+    | 'Selesai'
+
+interface LaundryOrder {
+    id: string
     nama: string
+    alamat: string
+    cabang: string
     layanan: string
-    berat: string
-    totalHarga: string
-    status: string
+    estimasiBerat: string
+    pembayaran: PaymentMethod
+    status: OrderStatus
+    createdAt: string
+    totalHarga?: string
+}
+
+const formatDate = (date?: string): string => {
+    if (!date) return '-'
+    const d = new Date(date)
+    return isNaN(d.getTime())
+        ? '-'
+        : d.toLocaleDateString('id-ID', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric',
+          })
 }
 
 export default function UserDashboardPage() {
-    const [activeOrders, setActiveOrders] = useState<Order[]>([])
-    const [historyOrders, setHistoryOrders] = useState<Order[]>([])
-
     const userName = 'Kevin'
 
+    const [orders, setOrders] = useState<LaundryOrder[]>([])
+    const [qrisOrder, setQrisOrder] = useState<LaundryOrder | null>(null)
+
+    const loadOrders = (): void => {
+        const stored = localStorage.getItem('laundry_orders')
+        const data: LaundryOrder[] = stored
+            ? JSON.parse(stored)
+            : []
+
+        setOrders(data.filter((o) => o.nama === userName))
+    }
+
     useEffect(() => {
-        const sync = () => {
-            const process: Order[] = JSON.parse(
-                localStorage.getItem('laundry_process_orders') || '[]'
-            ).filter((o: Order) => o.nama === userName)
-
-            const done: Order[] = JSON.parse(
-                localStorage.getItem('laundry_done_orders') || '[]'
-            ).filter((o: Order) => o.nama === userName)
-
-            setActiveOrders(process)
-            setHistoryOrders(done)
-        }
-
-        sync()
-        const interval = setInterval(sync, 1000)
-        return () => clearInterval(interval)
+        loadOrders()
+        const i = setInterval(loadOrders, 1000)
+        return () => clearInterval(i)
     }, [])
 
+    const bayarQris = (id: string): void => {
+        const updated = orders.map((o) =>
+            o.id === id ? { ...o, status: 'Menunggu Antrian' } : o
+        )
+
+        localStorage.setItem('laundry_orders', JSON.stringify(updated))
+        setQrisOrder(null)
+        alert('Pembayaran berhasil')
+        loadOrders()
+    }
+
     return (
-        <div className="space-y-12 text-slate-900">
+        <div className="space-y-10 text-slate-900">
             {/* HEADER */}
-            <div className="bg-gradient-to-r from-cyan-600 to-sky-700 rounded-3xl p-8 text-white shadow-xl">
+            <div className="bg-gradient-to-r from-cyan-600 to-sky-700 rounded-3xl p-8 text-white">
                 <h1 className="text-3xl font-extrabold">
                     Halo, {userName} 👋
                 </h1>
-                <p className="text-cyan-100 mt-1 font-medium">
-                    Pantau status laundry kamu secara realtime
+                <p className="text-cyan-100">
+                    Pantau status laundry kamu
                 </p>
             </div>
 
-            {/* LAUNDRY AKTIF */}
+            {/* AKTIF */}
             <section>
-                <h2 className="text-2xl font-extrabold text-slate-900 mb-5">
+                <h2 className="text-xl font-extrabold mb-4">
                     Laundry Aktif
                 </h2>
 
-                {activeOrders.length === 0 ? (
-                    <div className="bg-white rounded-2xl p-6 shadow text-slate-600 font-medium">
-                        Tidak ada laundry yang sedang diproses
+                {orders.filter((o) => o.status !== 'Selesai').length === 0 ? (
+                    <div className="bg-white p-6 rounded-xl shadow">
+                        Tidak ada laundry aktif
                     </div>
                 ) : (
                     <div className="grid md:grid-cols-2 gap-6">
-                        {activeOrders.map((o, i) => (
-                            <div
-                                key={i}
-                                className="bg-white rounded-3xl shadow-xl p-6 border-l-8 border-cyan-600"
-                            >
-                                <div className="flex justify-between items-center mb-3">
-                                    <span className="text-xl font-extrabold text-cyan-700">
-                                        {o.noAntrian}
+                        {orders
+                            .filter((o) => o.status !== 'Selesai')
+                            .map((o) => (
+                                <div
+                                    key={o.id}
+                                    className="bg-white rounded-2xl p-6 shadow border-l-8 border-cyan-600"
+                                >
+                                    <div className="flex justify-between">
+                                        <span className="font-bold text-cyan-700">
+                                            {o.id}
+                                        </span>
+                                        <span className="text-xs text-slate-500">
+                                            {formatDate(o.createdAt)}
+                                        </span>
+                                    </div>
+
+                                    <p className="mt-1">{o.layanan}</p>
+
+                                    <span className="inline-block mt-2 px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700">
+                                        {o.status}
                                     </span>
-                                    <span className="text-sm font-medium text-slate-600">
-                                        {o.noOrder}
-                                    </span>
+
+                                    {o.totalHarga && (
+                                        <p className="mt-2 font-semibold">
+                                            Total: Rp {o.totalHarga}
+                                        </p>
+                                    )}
+
+                                    {o.status === 'Menunggu Pembayaran' && (
+                                        <button
+                                            onClick={() => setQrisOrder(o)}
+                                            className="mt-4 w-full bg-green-600 text-white font-bold py-2 rounded-xl"
+                                        >
+                                            Bayar QRIS
+                                        </button>
+                                    )}
                                 </div>
-
-                                <p className="font-extrabold text-slate-900 text-lg">
-                                    {o.layanan}
-                                </p>
-
-                                <div className="mt-2 space-y-1 text-sm font-medium text-slate-700">
-                                    <p>Berat: {o.berat} Kg</p>
-                                    <p>Total: Rp {o.totalHarga}</p>
-                                </div>
-
-                                <span className="inline-block mt-5 px-4 py-1 rounded-full text-sm font-extrabold bg-blue-100 text-blue-700">
-                                    {o.status}
-                                </span>
-                            </div>
-                        ))}
+                            ))}
                     </div>
                 )}
             </section>
 
             {/* RIWAYAT */}
             <section>
-                <h2 className="text-2xl font-extrabold text-slate-900 mb-5">
+                <h2 className="text-xl font-extrabold mb-4">
                     Riwayat Laundry
                 </h2>
 
-                {historyOrders.length === 0 ? (
-                    <div className="bg-white rounded-2xl p-6 shadow text-slate-600 font-medium">
-                        Belum ada riwayat laundry
-                    </div>
-                ) : (
-                    <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-                        <table className="w-full text-sm text-slate-900">
-                            <thead className="bg-slate-100">
-                                <tr className="font-bold">
-                                    <th className="px-6 py-4 text-left">
-                                        No Antrian
-                                    </th>
-                                    <th className="text-left">No Order</th>
-                                    <th className="text-left">Layanan</th>
-                                    <th className="text-left">Berat</th>
-                                    <th className="text-left">Total</th>
-                                    <th className="text-left">Status</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                {historyOrders.map((o, i) => (
-                                    <tr
-                                        key={i}
-                                        className="border-t hover:bg-slate-50 transition"
-                                    >
-                                        <td className="px-6 py-4 font-extrabold text-slate-900">
-                                            {o.noAntrian}
+                <div className="bg-white rounded-xl shadow overflow-hidden">
+                    <table className="w-full text-sm">
+                        <thead className="bg-slate-100">
+                            <tr>
+                                <th className="px-6 py-3 text-left">
+                                    No Order
+                                </th>
+                                <th>Layanan</th>
+                                <th>Tanggal</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {orders
+                                .filter((o) => o.status === 'Selesai')
+                                .map((o) => (
+                                    <tr key={o.id} className="border-t">
+                                        <td className="px-6 py-3 font-bold">
+                                            {o.id}
                                         </td>
-                                        <td className="font-semibold">
-                                            {o.noOrder}
-                                        </td>
-                                        <td className="font-medium">
-                                            {o.layanan}
-                                        </td>
-                                        <td className="font-medium">
-                                            {o.berat} Kg
-                                        </td>
-                                        <td className="font-extrabold">
-                                            Rp {o.totalHarga}
-                                        </td>
+                                        <td>{o.layanan}</td>
+                                        <td>{formatDate(o.createdAt)}</td>
+                                        <td>{o.totalHarga}</td>
                                         <td>
-                                            <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-green-100 text-green-700">
-                                                {o.status}
+                                            <span className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-bold">
+                                                Selesai
                                             </span>
                                         </td>
                                     </tr>
                                 ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
+                        </tbody>
+                    </table>
+                </div>
             </section>
+
+            {/* MODAL QRIS */}
+            {qrisOrder && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                    <div className="bg-white rounded-3xl p-8 w-full max-w-md text-center">
+                        <h2 className="text-xl font-extrabold mb-4">
+                            Bayar dengan QRIS
+                        </h2>
+
+                        <img
+                            src="/qris.png"
+                            alt="QRIS"
+                            className="mx-auto w-64 mb-4"
+                        />
+
+                        <p className="font-semibold mb-6">
+                            Total: Rp {qrisOrder.totalHarga}
+                        </p>
+
+                        <button
+                            onClick={() => bayarQris(qrisOrder.id)}
+                            className="w-full bg-green-600 text-white font-bold py-3 rounded-xl"
+                        >
+                            Saya Sudah Bayar
+                        </button>
+
+                        <button
+                            onClick={() => setQrisOrder(null)}
+                            className="mt-3 w-full py-2 font-semibold"
+                        >
+                            Batal
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
