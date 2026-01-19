@@ -4,7 +4,6 @@ import Image from 'next/image'
 export default function HomePage() {
   return (
     <>
-      {/* HERO SECTION */}
       <section className="relative min-h-[calc(100vh-64px)] flex items-center bg-gradient-to-br from-sky-300 via-sky-400 to-blue-400 overflow-hidden">
         <div className="absolute -top-24 -left-24 w-96 h-96 bg-white/20 rounded-full blur-3xl" />
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl" />
@@ -60,7 +59,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* IMAGE SECTION (DI ATAS FOOTER) */}
       <section className="bg-white py-16">
         <div className="container mx-auto px-6 flex justify-center">
           <div className="relative w-full max-w-4xl h-[300px] md:h-[420px] rounded-3xl overflow-hidden shadow-2xl">

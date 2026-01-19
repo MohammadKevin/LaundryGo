@@ -109,6 +109,15 @@ function SidebarContent({ close }: { close?: () => void }) {
                 <ShoppingBag size={18} />
                 Pesan Laundry
             </Link>
+
+            <Link
+                href="/dashboard/user/alamat"
+                onClick={close}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/20 transition"
+            >
+                <Menu size={18} />
+                Alamat Saya
+            </Link>
         </nav>
     )
 }
