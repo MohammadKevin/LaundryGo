@@ -3,15 +3,22 @@
 import { useEffect, useState } from 'react'
 
 type PaymentMethod = 'Cash' | 'QRIS'
+
 type OrderStatus =
     | 'Kurir Menuju Lokasi Pickup'
     | 'Dalam Perjalanan ke Laundry'
     | 'Menunggu Penimbangan'
 
+interface Alamat {
+    id: number
+    nama: string
+    phone: string
+    alamat: string
+}
+
 interface LaundryOrder {
     id: string
-    nama: string
-    alamat: string
+    alamat: Alamat
     cabang: string
     layanan: string
     estimasiBerat: string
@@ -23,37 +30,32 @@ interface LaundryOrder {
 export default function DeliveryToLaundryPage() {
     const [orders, setOrders] = useState<LaundryOrder[]>([])
 
-    /* ================= LOAD ================= */
-    const loadOrders = (): void => {
+    const loadOrders = () => {
         const stored = localStorage.getItem('laundry_orders')
         const data: LaundryOrder[] = stored
-            ? (JSON.parse(stored) as LaundryOrder[])
+            ? JSON.parse(stored)
             : []
 
-        const active = data.filter(
-            (o) =>
-                o.status === 'Kurir Menuju Lokasi Pickup' ||
-                o.status === 'Dalam Perjalanan ke Laundry'
+        setOrders(
+            data.filter(
+                (o) =>
+                    o.status === 'Kurir Menuju Lokasi Pickup' ||
+                    o.status === 'Dalam Perjalanan ke Laundry'
+            )
         )
-
-        setOrders(active)
     }
 
     useEffect(() => {
         loadOrders()
-        const interval = setInterval(loadOrders, 1000)
-        return () => clearInterval(interval)
+        const i = setInterval(loadOrders, 1000)
+        return () => clearInterval(i)
     }, [])
 
-    /* ================= UPDATE STATUS ================= */
-    const updateStatus = (
-        id: string,
-        status: OrderStatus
-    ): void => {
+    const updateStatus = (id: string, status: OrderStatus) => {
         const stored = localStorage.getItem('laundry_orders')
-        const allOrders: LaundryOrder[] = stored
-            ? (JSON.parse(stored) as LaundryOrder[])
-            : []
+        if (!stored) return
+
+        const allOrders: LaundryOrder[] = JSON.parse(stored)
 
         const updated = allOrders.map((o) =>
             o.id === id ? { ...o, status } : o
@@ -93,7 +95,7 @@ export default function DeliveryToLaundryPage() {
                         >
                             <div className="flex justify-between mb-2">
                                 <span className="font-bold text-cyan-600">
-                                    {o.nama}
+                                    {o.alamat.nama}
                                 </span>
                                 <span className="text-xs font-bold px-3 py-1 rounded-full bg-blue-100 text-blue-700">
                                     Delivery
@@ -101,7 +103,11 @@ export default function DeliveryToLaundryPage() {
                             </div>
 
                             <p className="text-sm text-slate-700">
-                                📍 {o.alamat}
+                                📞 {o.alamat.phone}
+                            </p>
+
+                            <p className="text-sm text-slate-700 mt-1">
+                                📍 {o.alamat.alamat}
                             </p>
 
                             <p className="text-sm text-slate-700 mt-1">
