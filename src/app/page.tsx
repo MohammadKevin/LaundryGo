@@ -60,15 +60,28 @@ export default function HomePage() {
       </section>
 
       <section className="bg-white py-16">
-        <div className="container mx-auto px-6 flex justify-center">
-          <div className="relative w-full max-w-4xl h-[300px] md:h-[420px] rounded-3xl overflow-hidden shadow-2xl">
-            <Image
-              src="/nendra.jpeg"
-              alt="LaundryGo Preview"
-              fill
-              className="object-cover"
-              priority
-            />
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <div className="relative w-full aspect-video rounded-3xl overflow-hidden shadow-2xl">
+              <Image
+                src="/nendra.jpeg"
+                alt="LaundryGo Preview 1"
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+
+            <div className="relative w-full aspect-video rounded-3xl overflow-hidden shadow-2xl">
+              <Image
+                src="/nendra1.jpeg"
+                alt="LaundryGo Preview 2"
+                fill
+                className="object-cover"
+              />
+            </div>
+
           </div>
         </div>
       </section>
