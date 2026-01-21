@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 
 type PaymentMethod = 'Cash' | 'QRIS'
-type OrderStatus = 'Menunggu Konfirmasi Staff'
 
 interface Alamat {
     id: number
@@ -12,21 +11,18 @@ interface Alamat {
     alamat: string
 }
 
-interface LaundryOrder {
+interface Branch {
     id: string
-    alamat: Alamat
-    cabang: string
-    layanan: string
-    estimasiBerat: string
-    pembayaran: PaymentMethod
-    status: OrderStatus
-    createdAt: string
+    nama: string
+    alamat: string
+    telepon: string
 }
 
 export default function UserOrderPage() {
     const [alamatList, setAlamatList] = useState<Alamat[]>([])
-    const [alamatDipilih, setAlamatDipilih] = useState<string>('')
+    const [branches, setBranches] = useState<Branch[]>([])
 
+    const [alamatDipilih, setAlamatDipilih] = useState('')
     const [cabang, setCabang] = useState('')
     const [layanan, setLayanan] = useState('')
     const [estimasiBerat, setEstimasiBerat] = useState('')
@@ -34,20 +30,15 @@ export default function UserOrderPage() {
         useState<PaymentMethod>('Cash')
 
     useEffect(() => {
-        const stored = localStorage.getItem('user_addresses')
-        if (stored) {
-            setAlamatList(JSON.parse(stored))
-        }
+        const a = localStorage.getItem('user_addresses')
+        const b = localStorage.getItem('laundry_branches')
+        if (a) setAlamatList(JSON.parse(a))
+        if (b) setBranches(JSON.parse(b))
     }, [])
 
     const handleSubmit = () => {
-        if (
-            !alamatDipilih ||
-            !cabang ||
-            !layanan ||
-            !estimasiBerat
-        ) {
-            alert('Lengkapi data pesanan dan pilih alamat')
+        if (!alamatDipilih || !cabang || !layanan || !estimasiBerat) {
+            alert('Lengkapi data')
             return
         }
 
@@ -55,24 +46,20 @@ export default function UserOrderPage() {
             (a) => String(a.id) === alamatDipilih
         )
 
-        if (!alamat) {
-            alert('Alamat tidak valid')
-            return
-        }
+        if (!alamat) return
 
         const stored = localStorage.getItem('laundry_orders')
-        const orders: LaundryOrder[] = stored
-            ? JSON.parse(stored)
-            : []
+        const orders = stored ? JSON.parse(stored) : []
 
-        const newOrder: LaundryOrder = {
+        const newOrder = {
             id: `LG-${Date.now()}`,
+            nama: 'Kevin',
             alamat,
             cabang,
             layanan,
             estimasiBerat,
             pembayaran,
-            status: 'Menunggu Konfirmasi Staff',
+            status: 'Menunggu Pick Up Kurir',
             createdAt: new Date().toISOString(),
         }
 
@@ -80,6 +67,8 @@ export default function UserOrderPage() {
             'laundry_orders',
             JSON.stringify([...orders, newOrder])
         )
+
+        window.dispatchEvent(new Event('orders_updated'))
 
         alert('Pesanan berhasil dikirim')
 
@@ -91,43 +80,27 @@ export default function UserOrderPage() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-100 flex justify-center p-6">
-            <div className="w-full max-w-xl bg-white p-8 rounded-3xl shadow-lg space-y-6">
+        <div className="min-h-screen bg-slate-100 flex justify-center p-6 text-slate-900">
+            <div className="w-full max-w-xl bg-white p-8 rounded-3xl shadow space-y-6">
 
-                <h1 className="text-2xl font-extrabold text-slate-800">
+                <h1 className="text-2xl font-extrabold text-slate-900">
                     Pesan Laundry
                 </h1>
 
-                {/* PILIH ALAMAT */}
-                <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-600">
+                {/* ALAMAT */}
+                <div className="space-y-1">
+                    <label className="text-sm font-semibold text-slate-700">
                         Alamat Penjemputan
                     </label>
-
-                    {alamatList.length === 0 && (
-                        <p className="text-sm text-red-500">
-                            Kamu belum punya alamat. Tambahkan alamat
-                            terlebih dahulu.
-                        </p>
-                    )}
-
                     <select
-                        className="w-full px-4 py-3 border rounded-xl
-                                   text-slate-800 bg-white
-                                   focus:outline-none focus:ring-2
-                                   focus:ring-cyan-500"
+                        className="w-full p-3 border rounded-xl text-slate-900 bg-white
+                                   focus:outline-none focus:ring-2 focus:ring-cyan-500"
                         value={alamatDipilih}
-                        onChange={(e) =>
-                            setAlamatDipilih(e.target.value)
-                        }
-                        disabled={alamatList.length === 0}
+                        onChange={(e) => setAlamatDipilih(e.target.value)}
                     >
                         <option value="">Pilih Alamat</option>
                         {alamatList.map((a) => (
-                            <option
-                                key={a.id}
-                                value={String(a.id)}
-                            >
+                            <option key={a.id} value={a.id}>
                                 {a.nama} — {a.alamat}
                             </option>
                         ))}
@@ -136,61 +109,52 @@ export default function UserOrderPage() {
 
                 {/* CABANG */}
                 <div className="space-y-1">
-                    <label className="text-sm font-medium text-slate-600">
+                    <label className="text-sm font-semibold text-slate-700">
                         Cabang Laundry
                     </label>
-                    <input
-                        className="w-full px-4 py-3 border rounded-xl
-                                   text-slate-800
-                                   focus:outline-none focus:ring-2
-                                   focus:ring-cyan-500"
-                        placeholder="Contoh: LaundryGo Lowokwaru"
+                    <select
+                        className="w-full p-3 border rounded-xl text-slate-900 bg-white
+                                   focus:outline-none focus:ring-2 focus:ring-cyan-500"
                         value={cabang}
                         onChange={(e) => setCabang(e.target.value)}
-                    />
+                    >
+                        <option value="">Pilih Cabang</option>
+                        {branches.map((b) => (
+                            <option key={b.id} value={b.nama}>
+                                {b.nama} — {b.alamat}
+                            </option>
+                        ))}
+                    </select>
                 </div>
 
                 {/* LAYANAN */}
                 <div className="space-y-1">
-                    <label className="text-sm font-medium text-slate-600">
+                    <label className="text-sm font-semibold text-slate-700">
                         Layanan
                     </label>
                     <select
-                        className="w-full px-4 py-3 border rounded-xl
-                                   text-slate-800 bg-white
-                                   focus:outline-none focus:ring-2
-                                   focus:ring-cyan-500"
+                        className="w-full p-3 border rounded-xl text-slate-900 bg-white
+                                   focus:outline-none focus:ring-2 focus:ring-cyan-500"
                         value={layanan}
-                        onChange={(e) =>
-                            setLayanan(e.target.value)
-                        }
+                        onChange={(e) => setLayanan(e.target.value)}
                     >
                         <option value="">Pilih Layanan</option>
-                        <option value="Cuci + Lipat">
-                            Cuci + Lipat
-                        </option>
-                        <option value="Cuci + Setrika">
-                            Cuci + Setrika
-                        </option>
-                        <option value="Setrika Saja">
-                            Setrika Saja
-                        </option>
+                        <option value="Cuci + Lipat">Cuci + Lipat</option>
+                        <option value="Cuci + Setrika">Cuci + Setrika</option>
+                        <option value="Setrika Saja">Setrika Saja</option>
                     </select>
                 </div>
 
                 {/* BERAT */}
                 <div className="space-y-1">
-                    <label className="text-sm font-medium text-slate-600">
+                    <label className="text-sm font-semibold text-slate-700">
                         Estimasi Berat (Kg)
                     </label>
                     <input
                         type="number"
                         min={1}
-                        className="w-full px-4 py-3 border rounded-xl
-                                   text-slate-800
-                                   focus:outline-none focus:ring-2
-                                   focus:ring-cyan-500"
-                        placeholder="Contoh: 3"
+                        className="w-full p-3 border rounded-xl text-slate-900
+                                   focus:outline-none focus:ring-2 focus:ring-cyan-500"
                         value={estimasiBerat}
                         onChange={(e) =>
                             setEstimasiBerat(e.target.value)
@@ -200,14 +164,12 @@ export default function UserOrderPage() {
 
                 {/* PEMBAYARAN */}
                 <div className="space-y-1">
-                    <label className="text-sm font-medium text-slate-600">
+                    <label className="text-sm font-semibold text-slate-700">
                         Metode Pembayaran
                     </label>
                     <select
-                        className="w-full px-4 py-3 border rounded-xl
-                                   text-slate-800 bg-white
-                                   focus:outline-none focus:ring-2
-                                   focus:ring-cyan-500"
+                        className="w-full p-3 border rounded-xl text-slate-900 bg-white
+                                   focus:outline-none focus:ring-2 focus:ring-cyan-500"
                         value={pembayaran}
                         onChange={(e) =>
                             setPembayaran(
@@ -222,9 +184,8 @@ export default function UserOrderPage() {
 
                 <button
                     onClick={handleSubmit}
-                    className="w-full py-3 rounded-xl bg-cyan-600
-                               text-white font-bold
-                               hover:bg-cyan-700 transition"
+                    className="w-full bg-cyan-600 hover:bg-cyan-700
+                               text-white font-bold py-3 rounded-xl"
                 >
                     Kirim Pesanan
                 </button>

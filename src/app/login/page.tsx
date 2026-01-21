@@ -2,15 +2,49 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { loginApi } from '../../../lib/api'
 
 export default function LoginPage() {
     const router = useRouter()
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
 
-    const handleLogin = (e: React.FormEvent) => {
+    const [email, setEmail] = useState<string>('')
+    const [password, setPassword] = useState<string>('')
+    const [error, setError] = useState<string>('')
+    const [loading, setLoading] = useState<boolean>(false)
+
+    const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        router.push('/dashboard')
+        setError('')
+        setLoading(true)
+
+        try {
+            const res = await loginApi({ email, password })
+
+            localStorage.setItem('token', res.token)
+            localStorage.setItem('user', JSON.stringify(res.user))
+
+            switch (res.user.role) {
+                case 'ADMIN':
+                    router.push('/dashboard/admin')
+                    break
+                case 'STAFF':
+                    router.push('/dashboard/laundry')
+                    break
+                case 'USER':
+                    router.push('/dashboard/user')
+                    break
+                default:
+                    router.push('/')
+            }
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message)
+            } else {
+                setError('Login gagal')
+            }
+        } finally {
+            setLoading(false)
+        }
     }
 
     return (
@@ -24,6 +58,13 @@ export default function LoginPage() {
                         Login ke akun kamu
                     </p>
                 </div>
+
+                {error && (
+                    <p className="mb-4 text-sm text-red-600 text-center">
+                        {error}
+                    </p>
+                )}
+
                 <form onSubmit={handleLogin} className="space-y-5">
                     <div>
                         <label className="block text-sm font-medium text-slate-700 mb-1">
@@ -32,12 +73,21 @@ export default function LoginPage() {
                         <input
                             type="email"
                             placeholder="contoh@email.com"
-                            className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
+                            className="
+                                w-full px-4 py-3 rounded-xl
+                                border border-slate-300
+                                bg-white text-black
+                                placeholder:text-black placeholder:opacity-100
+                                focus:ring-2 focus:ring-blue-500
+                                focus:outline-none
+                            "
+                            style={{ WebkitTextFillColor: 'black' }}
                         />
                     </div>
+
                     <div>
                         <label className="block text-sm font-medium text-slate-700 mb-1">
                             Password
@@ -45,19 +95,30 @@ export default function LoginPage() {
                         <input
                             type="password"
                             placeholder="••••••••"
-                            className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
+                            className="
+                                w-full px-4 py-3 rounded-xl
+                                border border-slate-300
+                                bg-white text-black
+                                placeholder:text-black placeholder:opacity-100
+                                focus:ring-2 focus:ring-blue-500
+                                focus:outline-none
+                            "
+                            style={{ WebkitTextFillColor: 'black' }}
                         />
                     </div>
+
                     <button
                         type="submit"
-                        className="w-full py-3 rounded-xl bg-blue-600 text-white font-semibold text-lg hover:bg-blue-700 active:scale-[0.98] transition"
+                        disabled={loading}
+                        className="w-full py-3 rounded-xl bg-blue-600 text-white font-semibold text-lg hover:bg-blue-700 active:scale-[0.98] transition disabled:opacity-50"
                     >
-                        Masuk
+                        {loading ? 'Masuk...' : 'Masuk'}
                     </button>
                 </form>
+
                 <p className="text-center text-sm text-slate-600 mt-6">
                     Belum punya akun?{' '}
                     <a

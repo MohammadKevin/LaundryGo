@@ -22,7 +22,7 @@ type OrderStatus =
 interface LaundryOrder {
     id: string
     nama: string
-    alamat: string
+    alamat: any
     cabang: string
     layanan: string
     estimasiBerat: string
@@ -32,54 +32,60 @@ interface LaundryOrder {
     totalHarga?: string
 }
 
-const formatDate = (date?: string): string => {
+const formatDate = (date?: string) => {
     if (!date) return '-'
-    const d = new Date(date)
-    return isNaN(d.getTime())
-        ? '-'
-        : d.toLocaleDateString('id-ID', {
-              day: '2-digit',
-              month: 'short',
-              year: 'numeric',
-          })
+    return new Date(date).toLocaleDateString('id-ID')
 }
 
 export default function UserDashboardPage() {
     const userName = 'Kevin'
-
     const [orders, setOrders] = useState<LaundryOrder[]>([])
     const [qrisOrder, setQrisOrder] = useState<LaundryOrder | null>(null)
 
-    const loadOrders = (): void => {
+    const loadOrders = () => {
         const stored = localStorage.getItem('laundry_orders')
-        const data: LaundryOrder[] = stored
-            ? JSON.parse(stored)
-            : []
-
+        const data: LaundryOrder[] = stored ? JSON.parse(stored) : []
         setOrders(data.filter((o) => o.nama === userName))
     }
 
     useEffect(() => {
         loadOrders()
-        const i = setInterval(loadOrders, 1000)
-        return () => clearInterval(i)
+
+        const onStorage = (e: StorageEvent) => {
+            if (e.key === 'laundry_orders') loadOrders()
+        }
+
+        const onOrdersUpdated = () => loadOrders()
+
+        window.addEventListener('storage', onStorage)
+        window.addEventListener('orders_updated', onOrdersUpdated)
+
+        return () => {
+            window.removeEventListener('storage', onStorage)
+            window.removeEventListener('orders_updated', onOrdersUpdated)
+        }
     }, [])
 
-    const bayarQris = (id: string): void => {
-        const updated = orders.map((o) =>
+    const bayarQris = (id: string) => {
+        const stored = localStorage.getItem('laundry_orders')
+        const data: LaundryOrder[] = stored ? JSON.parse(stored) : []
+
+        const updated = data.map((o) =>
             o.id === id ? { ...o, status: 'Menunggu Antrian' } : o
         )
 
         localStorage.setItem('laundry_orders', JSON.stringify(updated))
+        window.dispatchEvent(new Event('orders_updated'))
+
         setQrisOrder(null)
         alert('Pembayaran berhasil')
-        loadOrders()
     }
 
     return (
         <div className="space-y-10 text-slate-900">
+
             {/* HEADER */}
-            <div className="bg-gradient-to-r from-cyan-600 to-sky-700 rounded-3xl p-8 text-white">
+            <div className="bg-gradient-to-r from-cyan-700 to-sky-800 rounded-3xl p-8 text-white">
                 <h1 className="text-3xl font-extrabold">
                     Halo, {userName} 👋
                 </h1>
@@ -90,12 +96,12 @@ export default function UserDashboardPage() {
 
             {/* AKTIF */}
             <section>
-                <h2 className="text-xl font-extrabold mb-4">
+                <h2 className="text-xl font-extrabold mb-4 text-slate-900">
                     Laundry Aktif
                 </h2>
 
                 {orders.filter((o) => o.status !== 'Selesai').length === 0 ? (
-                    <div className="bg-white p-6 rounded-xl shadow">
+                    <div className="bg-white p-6 rounded-xl shadow text-slate-700">
                         Tidak ada laundry aktif
                     </div>
                 ) : (
@@ -105,7 +111,7 @@ export default function UserDashboardPage() {
                             .map((o) => (
                                 <div
                                     key={o.id}
-                                    className="bg-white rounded-2xl p-6 shadow border-l-8 border-cyan-600"
+                                    className="bg-white rounded-2xl p-6 shadow border-l-8 border-cyan-600 text-slate-800"
                                 >
                                     <div className="flex justify-between">
                                         <span className="font-bold text-cyan-700">
@@ -116,14 +122,16 @@ export default function UserDashboardPage() {
                                         </span>
                                     </div>
 
-                                    <p className="mt-1">{o.layanan}</p>
+                                    <p className="mt-2 font-medium">
+                                        {o.layanan}
+                                    </p>
 
-                                    <span className="inline-block mt-2 px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700">
+                                    <span className="inline-block mt-3 px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800">
                                         {o.status}
                                     </span>
 
                                     {o.totalHarga && (
-                                        <p className="mt-2 font-semibold">
+                                        <p className="mt-3 font-semibold text-slate-900">
                                             Total: Rp {o.totalHarga}
                                         </p>
                                     )}
@@ -131,7 +139,7 @@ export default function UserDashboardPage() {
                                     {o.status === 'Menunggu Pembayaran' && (
                                         <button
                                             onClick={() => setQrisOrder(o)}
-                                            className="mt-4 w-full bg-green-600 text-white font-bold py-2 rounded-xl"
+                                            className="mt-4 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-xl"
                                         >
                                             Bayar QRIS
                                         </button>
@@ -144,13 +152,13 @@ export default function UserDashboardPage() {
 
             {/* RIWAYAT */}
             <section>
-                <h2 className="text-xl font-extrabold mb-4">
+                <h2 className="text-xl font-extrabold mb-4 text-slate-900">
                     Riwayat Laundry
                 </h2>
 
                 <div className="bg-white rounded-xl shadow overflow-hidden">
-                    <table className="w-full text-sm">
-                        <thead className="bg-slate-100">
+                    <table className="w-full text-sm text-slate-700">
+                        <thead className="bg-slate-100 text-slate-800">
                             <tr>
                                 <th className="px-6 py-3 text-left">
                                     No Order
@@ -166,14 +174,14 @@ export default function UserDashboardPage() {
                                 .filter((o) => o.status === 'Selesai')
                                 .map((o) => (
                                     <tr key={o.id} className="border-t">
-                                        <td className="px-6 py-3 font-bold">
+                                        <td className="px-6 py-3 font-bold text-slate-900">
                                             {o.id}
                                         </td>
                                         <td>{o.layanan}</td>
                                         <td>{formatDate(o.createdAt)}</td>
                                         <td>{o.totalHarga}</td>
                                         <td>
-                                            <span className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-bold">
+                                            <span className="px-3 py-1 rounded-full bg-green-100 text-green-800 text-xs font-bold">
                                                 Selesai
                                             </span>
                                         </td>
@@ -186,15 +194,14 @@ export default function UserDashboardPage() {
 
             {/* MODAL QRIS */}
             {qrisOrder && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-                    <div className="bg-white rounded-3xl p-8 w-full max-w-md text-center">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+                    <div className="bg-white rounded-3xl p-8 w-full max-w-md text-center text-slate-900">
                         <h2 className="text-xl font-extrabold mb-4">
                             Bayar dengan QRIS
                         </h2>
 
                         <img
                             src="/qris.png"
-                            alt="QRIS"
                             className="mx-auto w-64 mb-4"
                         />
 
@@ -204,14 +211,14 @@ export default function UserDashboardPage() {
 
                         <button
                             onClick={() => bayarQris(qrisOrder.id)}
-                            className="w-full bg-green-600 text-white font-bold py-3 rounded-xl"
+                            className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl"
                         >
                             Saya Sudah Bayar
                         </button>
 
                         <button
                             onClick={() => setQrisOrder(null)}
-                            className="mt-3 w-full py-2 font-semibold"
+                            className="mt-3 w-full py-2 font-semibold text-slate-600"
                         >
                             Batal
                         </button>
