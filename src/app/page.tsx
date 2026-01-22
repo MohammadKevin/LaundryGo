@@ -65,7 +65,7 @@ export default function HomePage() {
 
             <div className="relative w-full aspect-video rounded-3xl overflow-hidden shadow-2xl">
               <Image
-                src="/nendra3.jpeg"
+                src="/nendra.jpeg"
                 alt="LaundryGo Preview 1"
                 fill
                 className="object-cover"
