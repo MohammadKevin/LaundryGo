@@ -44,15 +44,16 @@ export default function HomePage() {
 
           <div className="hidden md:flex justify-center">
             <div className="w-80 h-80 bg-white/80 backdrop-blur rounded-3xl shadow-2xl p-8 flex flex-col justify-center gap-4">
-              <div className="relative w-full aspect-video rounded-3xl overflow-hidden shadow-2xl">
-              <Image
-                src="/nendra2.jpeg"
-                alt="LaundryGo Preview 1"
-                fill
-                className="object-cover"
-                priority
-              />
-            </div>
+              <h3 className="text-xl font-bold text-blue-700 mb-2 text-center">
+                Kenapa LaundryGo?
+              </h3>
+
+              <div className="space-y-3 text-slate-700 font-medium">
+                <p>🧺 Antar Jemput Laundry</p>
+                <p>📍 Tracking Online Real-time</p>
+                <p>⚡ Proses Cepat & Tepat Waktu</p>
+                <p>💙 Pelayanan Aman & Terpercaya</p>
+              </div>
             </div>
           </div>
         </div>
