@@ -15,7 +15,7 @@ export default function BMCPage() {
       <Image
         src="/Presentasi Besok.png"
         alt="LaundryGo Business Model Canvas"
-        width={1600}
+        width={1400}
         height={1000}
         style={{
           maxWidth: "100%",

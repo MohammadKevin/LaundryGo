@@ -84,7 +84,6 @@ export default function UserDashboardPage() {
     return (
         <div className="space-y-10 text-slate-900">
 
-            {/* HEADER */}
             <div className="bg-gradient-to-r from-cyan-700 to-sky-800 rounded-3xl p-8 text-white">
                 <h1 className="text-3xl font-extrabold">
                     Halo, {userName} 👋
