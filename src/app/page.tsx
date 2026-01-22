@@ -48,12 +48,15 @@ export default function HomePage() {
                 Kenapa LaundryGo?
               </h3>
 
-              <div className="space-y-3 text-slate-700 font-medium">
-                <p>🧺 Antar Jemput Laundry</p>
-                <p>📍 Tracking Online Real-time</p>
-                <p>⚡ Proses Cepat & Tepat Waktu</p>
-                <p>💙 Pelayanan Aman & Terpercaya</p>
-              </div>
+              <div className="relative w-full aspect-video rounded-3xl overflow-hidden shadow-2xl">
+              <Image
+                src="/nendra2.jpeg"
+                alt="LaundryGo Preview 1"
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
             </div>
           </div>
         </div>
