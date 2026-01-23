@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Trash2, Edit3, Plus, Store, Wallet, TrendingUp } from 'lucide-react'
 
 type Branch = {
     id: string
@@ -26,16 +28,11 @@ export default function AdminDashboardPage() {
     const [totalIncome, setTotalIncome] = useState(0)
 
     const loadBranches = () => {
-        setBranches(
-            JSON.parse(localStorage.getItem('laundry_branches') || '[]')
-        )
+        setBranches(JSON.parse(localStorage.getItem('laundry_branches') || '[]'))
     }
 
     const loadIncome = () => {
-        const orders: Order[] = JSON.parse(
-            localStorage.getItem('laundry_orders') || '[]'
-        )
-
+        const orders: Order[] = JSON.parse(localStorage.getItem('laundry_orders') || '[]')
         const selesai = orders.filter(o => o.status === 'Selesai')
 
         let total = 0
@@ -43,8 +40,7 @@ export default function AdminDashboardPage() {
 
         selesai.forEach(o => {
             total += o.totalHarga || 0
-            perCabang[o.cabang] =
-                (perCabang[o.cabang] || 0) + (o.totalHarga || 0)
+            perCabang[o.cabang] = (perCabang[o.cabang] || 0) + (o.totalHarga || 0)
         })
 
         setIncome(perCabang)
@@ -60,24 +56,28 @@ export default function AdminDashboardPage() {
         if (!nama || !alamat || !telepon) return alert('Lengkapi data')
 
         const updated = editingId
-            ? branches.map(b =>
-                  b.id === editingId
-                      ? { ...b, nama, alamat, telepon }
-                      : b
-              )
-            : [
-                  ...branches,
-                  {
-                      id: `CB-${Date.now()}`,
-                      nama,
-                      alamat,
-                      telepon,
-                  },
-              ]
+            ? branches.map(b => b.id === editingId ? { ...b, nama, alamat, telepon } : b)
+            : [...branches, { id: `CB-${Date.now()}`, nama, alamat, telepon }]
 
         localStorage.setItem('laundry_branches', JSON.stringify(updated))
         setBranches(updated)
         resetForm()
+    }
+
+    const handleEdit = (branch: Branch) => {
+        setEditingId(branch.id)
+        setNama(branch.nama)
+        setAlamat(branch.alamat)
+        setTelepon(branch.telepon)
+        window.scrollTo({ top: 400, behavior: 'smooth' })
+    }
+
+    const handleDelete = (id: string) => {
+        if (confirm('Hapus cabang ini?')) {
+            const updated = branches.filter(b => b.id !== id)
+            localStorage.setItem('laundry_branches', JSON.stringify(updated))
+            setBranches(updated)
+        }
     }
 
     const resetForm = () => {
@@ -88,160 +88,167 @@ export default function AdminDashboardPage() {
     }
 
     return (
-        <div className="min-h-screen space-y-24 bg-gradient-to-br from-slate-100 via-sky-100 to-indigo-100 p-10">
+        <div className="min-h-screen space-y-16 bg-[#f8fafc] p-6 md:p-12 selection:bg-indigo-100">
 
-            {/* HERO */}
-            <section className="relative overflow-hidden rounded-[48px] bg-gradient-to-br from-indigo-800 via-blue-700 to-cyan-600 p-16 text-white shadow-[0_40px_120px_-30px_rgba(59,130,246,0.9)]">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.25),transparent_60%)]" />
-                <div className="relative">
-                    <span className="inline-block mb-5 rounded-full bg-white/20 px-5 py-2 text-xs font-black tracking-widest uppercase">
-                        LaundryGo Admin
-                    </span>
-                    <h1 className="text-5xl font-black tracking-tight">
-                        Admin Dashboard
-                    </h1>
-                    <p className="mt-4 max-w-2xl text-indigo-100 text-sm leading-relaxed">
-                        Kelola cabang dan pantau penghasilan LaundryGo dengan
-                        tampilan modern kelas enterprise.
-                    </p>
+            {/* HERO SECTION */}
+            <motion.section 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="relative overflow-hidden rounded-[40px] bg-slate-900 p-12 text-white shadow-2xl"
+            >
+                <div className="absolute top-0 right-0 -mr-20 -mt-20 h-64 w-64 rounded-full bg-indigo-500/20 blur-[100px]" />
+                <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
+                    <div className="space-y-4">
+                        <span className="inline-block rounded-full bg-indigo-500/20 px-4 py-1 text-xs font-bold tracking-widest text-indigo-300 uppercase">
+                            Admin System v2.0
+                        </span>
+                        <h1 className="text-4xl md:text-6xl font-black tracking-tighter">Control Center</h1>
+                        <p className="max-w-md text-slate-400 font-medium">Monitoring performa cabang dan manajemen infrastruktur LaundryGo dalam satu panel.</p>
+                    </div>
+                    <div className="flex gap-4">
+                        <StatMini label="Total Cabang" value={branches.length} icon={<Store size={20}/>} />
+                        <StatMini label="Revenue" value="Growth" icon={<TrendingUp size={20}/>} />
+                    </div>
                 </div>
-            </section>
+            </motion.section>
 
-            {/* CABANG */}
-            <section className="rounded-[40px] bg-white/80 backdrop-blur-xl p-14 shadow-[0_25px_80px_-20px_rgba(0,0,0,0.25)] border border-white">
-                <div className="flex items-center justify-between mb-12">
-                    <h2 className="text-3xl font-black text-slate-900">
-                        Manajemen Cabang
-                    </h2>
-                    <div className="h-2 w-32 rounded-full bg-gradient-to-r from-indigo-500 to-cyan-400" />
-                </div>
+            <div className="grid lg:grid-cols-3 gap-12">
+                {/* FORM MANAJEMEN */}
+                <motion.section 
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="lg:col-span-1 h-fit sticky top-12 space-y-8 rounded-[32px] bg-white p-10 shadow-xl border border-slate-100"
+                >
+                    <div className="space-y-2">
+                        <h2 className="text-2xl font-black text-slate-900 italic">Manage Branch</h2>
+                        <div className="h-1 w-12 bg-indigo-600 rounded-full" />
+                    </div>
 
-                <div className="grid md:grid-cols-3 gap-10 mb-12">
-                    <Input label="Nama Cabang" value={nama} onChange={setNama} />
-                    <Input label="Alamat Cabang" value={alamat} onChange={setAlamat} />
-                    <Input label="No Telepon" value={telepon} onChange={setTelepon} />
-                </div>
+                    <div className="space-y-6">
+                        <Input label="Branch Name" value={nama} onChange={setNama} placeholder="LaundryGo Pusat" />
+                        <Input label="Location" value={alamat} onChange={setAlamat} placeholder="Jl. Sudirman No. 1" />
+                        <Input label="Contact" value={telepon} onChange={setTelepon} placeholder="0812..." />
+                    </div>
 
-                <div className="flex gap-5 mb-14">
-                    <button
-                        onClick={handleSave}
-                        className="rounded-2xl bg-gradient-to-br from-indigo-600 to-blue-600 px-10 py-4 text-sm font-black text-white shadow-[0_15px_40px_-10px_rgba(59,130,246,0.8)] hover:scale-[1.04] active:scale-95 transition"
-                    >
-                        {editingId ? 'Update Cabang' : 'Tambah Cabang'}
-                    </button>
-
-                    {editingId && (
+                    <div className="flex flex-col gap-3">
                         <button
-                            onClick={resetForm}
-                            className="rounded-2xl border-2 border-slate-300 px-10 py-4 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                            onClick={handleSave}
+                            className="flex items-center justify-center gap-2 rounded-2xl bg-indigo-600 py-4 font-black text-white shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition-all active:scale-95"
                         >
-                            Batal
+                            {editingId ? <Edit3 size={18}/> : <Plus size={18}/>}
+                            {editingId ? 'Update Detail' : 'Register Branch'}
                         </button>
-                    )}
-                </div>
+                        {editingId && (
+                            <button onClick={resetForm} className="text-sm font-bold text-slate-400 hover:text-slate-600 transition">Cancel Editing</button>
+                        )}
+                    </div>
+                </motion.section>
 
-                <div className="overflow-hidden rounded-3xl border border-slate-200 shadow">
-                    <table className="w-full text-sm">
-                        <thead className="bg-slate-100 text-slate-700">
-                            <tr>
-                                <th className="p-6 text-left">Nama</th>
-                                <th className="p-6 text-left">Alamat</th>
-                                <th className="p-6 text-left">Telepon</th>
-                                <th className="p-6 text-right">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {branches.length === 0 ? (
-                                <tr>
-                                    <td colSpan={4} className="p-12 text-center text-slate-500">
-                                        Belum ada cabang
-                                    </td>
+                {/* TABLE CABANG */}
+                <motion.section 
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="lg:col-span-2 space-y-8 rounded-[32px] bg-white p-10 shadow-xl border border-slate-100"
+                >
+                    <div className="overflow-x-auto">
+                        <table className="w-full">
+                            <thead>
+                                <tr className="text-left text-xs font-black uppercase tracking-[0.2em] text-slate-400">
+                                    <th className="pb-6 pl-4">Branch Info</th>
+                                    <th className="pb-6">Contact</th>
+                                    <th className="pb-6 text-right">Actions</th>
                                 </tr>
-                            ) : (
-                                branches.map(b => (
-                                    <tr
-                                        key={b.id}
-                                        className="border-t hover:bg-indigo-50/40 transition"
-                                    >
-                                        <td className="p-6 font-bold text-slate-900">
-                                            {b.nama}
-                                        </td>
-                                        <td className="p-6 text-slate-700">
-                                            {b.alamat}
-                                        </td>
-                                        <td className="p-6 text-slate-700">
-                                            {b.telepon}
-                                        </td>
-                                        <td className="p-6 text-right space-x-6">
-                                            <button className="font-bold text-indigo-600 hover:underline">
-                                                Edit
-                                            </button>
-                                            <button className="font-bold text-red-600 hover:underline">
-                                                Hapus
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody className="divide-y divide-slate-50">
+                                <AnimatePresence mode='popLayout'>
+                                    {branches.map(b => (
+                                        <motion.tr 
+                                            layout
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0, scale: 0.9 }}
+                                            key={b.id} 
+                                            className="group transition-colors hover:bg-slate-50/50"
+                                        >
+                                            <td className="py-6 pl-4">
+                                                <div className="font-black text-slate-900">{b.nama}</div>
+                                                <div className="text-xs font-medium text-slate-400">{b.alamat}</div>
+                                            </td>
+                                            <td className="py-6 font-bold text-slate-600 text-sm">{b.telepon}</td>
+                                            <td className="py-6 text-right">
+                                                <div className="flex justify-end gap-2">
+                                                    <button onClick={() => handleEdit(b)} className="p-2 text-slate-400 hover:text-indigo-600 transition-colors"><Edit3 size={18}/></button>
+                                                    <button onClick={() => handleDelete(b.id)} className="p-2 text-slate-400 hover:text-red-600 transition-colors"><Trash2 size={18}/></button>
+                                                </div>
+                                            </td>
+                                        </motion.tr>
+                                    ))}
+                                </AnimatePresence>
+                            </tbody>
+                        </table>
+                    </div>
+                </motion.section>
+            </div>
+
+            {/* PENGHASILAN SECTION */}
+            <section className="space-y-10">
+                <div className="flex items-center gap-4">
+                    <div className="p-3 bg-emerald-100 text-emerald-600 rounded-2xl"><Wallet /></div>
+                    <h2 className="text-3xl font-black text-slate-900 tracking-tight">Financial Reports</h2>
                 </div>
-            </section>
 
-            {/* PENGHASILAN */}
-            <section className="rounded-[40px] bg-gradient-to-br from-emerald-50 to-white p-14 shadow-[0_25px_80px_-20px_rgba(16,185,129,0.4)] border">
-                <h2 className="text-3xl font-black text-slate-900 mb-14">
-                    Penghasilan Cabang
-                </h2>
+                <div className="grid md:grid-cols-4 gap-8">
+                    <motion.div 
+                        whileHover={{ y: -5 }}
+                        className="md:col-span-2 rounded-[32px] bg-gradient-to-br from-emerald-500 to-teal-600 p-10 text-white shadow-xl shadow-emerald-200"
+                    >
+                        <p className="text-xs font-black uppercase tracking-widest opacity-70">Accumulated Revenue</p>
+                        <p className="mt-4 text-6xl font-black tracking-tighter">
+                            Rp {totalIncome.toLocaleString('id-ID')}
+                        </p>
+                    </motion.div>
 
-                <div className="grid md:grid-cols-3 gap-10 mb-16">
-                    {Object.entries(income).map(([cabang, total]) => (
-                        <div
-                            key={cabang}
-                            className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-500 to-green-600 p-10 text-white shadow-[0_25px_70px_-15px_rgba(16,185,129,0.85)]"
+                    {Object.entries(income).map(([cabang, total], idx) => (
+                        <motion.div 
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: idx * 0.1 }}
+                            key={cabang} 
+                            className="rounded-[32px] bg-white p-8 shadow-lg border border-slate-50"
                         >
-                            <div className="absolute inset-0 bg-white/10" />
-                            <p className="relative text-sm font-semibold opacity-90">
-                                {cabang}
-                            </p>
-                            <p className="relative mt-4 text-4xl font-black">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{cabang}</p>
+                            <p className="mt-2 text-2xl font-black text-slate-800 italic">
                                 Rp {total.toLocaleString('id-ID')}
                             </p>
-                        </div>
+                        </motion.div>
                     ))}
-                </div>
-
-                <div className="rounded-3xl bg-gradient-to-br from-green-600 to-emerald-600 p-12 text-white shadow-[0_30px_90px_-20px_rgba(16,185,129,0.9)]">
-                    <p className="text-sm font-bold uppercase tracking-widest opacity-90">
-                        Total Penghasilan
-                    </p>
-                    <p className="mt-2 text-5xl font-black">
-                        Rp {totalIncome.toLocaleString('id-ID')}
-                    </p>
                 </div>
             </section>
         </div>
     )
 }
 
-function Input({
-    label,
-    value,
-    onChange,
-}: {
-    label: string
-    value: string
-    onChange: (v: string) => void
-}) {
+function StatMini({ label, value, icon }: { label: string, value: string | number, icon: any }) {
     return (
-        <div>
-            <label className="block mb-2 text-xs font-black text-slate-600 uppercase tracking-widest">
-                {label}
-            </label>
+        <div className="flex items-center gap-4 rounded-2xl bg-white/10 px-6 py-4 backdrop-blur-md">
+            <div className="text-indigo-300">{icon}</div>
+            <div>
+                <p className="text-[10px] font-bold text-indigo-200 uppercase tracking-widest">{label}</p>
+                <p className="font-black text-white">{value}</p>
+            </div>
+        </div>
+    )
+}
+
+function Input({ label, value, onChange, placeholder }: { label: string, value: string, onChange: (v: string) => void, placeholder: string }) {
+    return (
+        <div className="space-y-2">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{label}</label>
             <input
+                placeholder={placeholder}
                 value={value}
                 onChange={e => onChange(e.target.value)}
-                className="w-full rounded-2xl border border-slate-300 bg-white px-5 py-4 text-sm text-slate-900 shadow-inner focus:outline-none focus:ring-4 focus:ring-indigo-500/30"
+                className="w-full rounded-2xl bg-slate-50 border border-transparent px-5 py-4 text-sm font-bold text-slate-800 transition-all focus:bg-white focus:border-indigo-600 focus:outline-none focus:ring-4 focus:ring-indigo-100"
             />
         </div>
     )
