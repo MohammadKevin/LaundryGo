@@ -280,7 +280,7 @@ export default function HomePage() {
           <div>
             <p className="font-bold mb-6">Kontak</p>
             <ul className="space-y-4 text-slate-500 text-sm">
-              <li>Malang, Jawa Timur</li>
+              <li>Kandat, Jawa Timur</li>
               <li>kevin@laundrygo.com</li>
               <li><a href="https://wa.me/6282334027274">+6282334027274</a></li>
             </ul>
