@@ -90,6 +90,7 @@ export default function Navbar() {
                             <a href="#home" onClick={() => setMobileMenuOpen(false)}>Home</a>
                             <a href="#services" onClick={() => setMobileMenuOpen(false)}>Services</a>
                             <a href="#testimonials" onClick={() => setMobileMenuOpen(false)}>Client</a>
+                            <a href="#aplications" onClick={() => setMobileMenuOpen(false)}>APP</a>
                             <hr className="border-slate-100" />
                             <Link href="/login" className="text-blue-600">Login</Link>
                         </div>
