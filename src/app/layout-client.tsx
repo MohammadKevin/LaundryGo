@@ -22,7 +22,7 @@ export default function LayoutClient({
       {!isDashboard && (
         <footer className="bg-white text-center py-4 text-sm text-slate-500">
           © {new Date().getFullYear()} LaundryGo — Developed by{' '}
-          <span className="font-semibold">Mohammad Kevin</span>
+          <span className="font-semibold">LaundryGo - Kevin - Danendra - Pradipta</span>
         </footer>
       )}
     </>
