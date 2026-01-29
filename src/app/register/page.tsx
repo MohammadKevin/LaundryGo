@@ -4,7 +4,9 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
-import { Role } from '../../../lib/auth'
+
+// ⬇️ TYPE ROLE (FRONTEND ONLY)
+type Role = 'USER' | 'STAFF' | 'KURIR' | 'ADMIN' | 'SUPERADMIN'
 
 export default function RegisterPage() {
     const router = useRouter()
@@ -27,7 +29,7 @@ export default function RegisterPage() {
 
             if (users.find((u: any) => u.email === email)) {
                 throw new Error('Email sudah terdaftar')
-            }
+            note}
 
             users.push({
                 id: Date.now(),
@@ -42,7 +44,7 @@ export default function RegisterPage() {
             localStorage.setItem('users', JSON.stringify(users))
             router.push('/login')
         } catch (err: any) {
-            setError(err.message)
+            setError(err.message || 'Gagal mendaftar')
         } finally {
             setLoading(false)
         }
@@ -88,7 +90,10 @@ export default function RegisterPage() {
                 </form>
 
                 <p className="mt-6 text-center">
-                    Sudah punya akun? <Link href="/login" className="text-blue-600 font-bold">Login</Link>
+                    Sudah punya akun?{' '}
+                    <Link href="/login" className="text-blue-600 font-bold">
+                        Login
+                    </Link>
                 </p>
             </motion.div>
         </div>
