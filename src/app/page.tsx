@@ -282,7 +282,7 @@ export default function HomePage() {
             <ul className="space-y-4 text-slate-500 text-sm">
               <li>Malang, Jawa Timur</li>
               <li>kevin@laundrygo.com</li>
-              <li>+62 821 3158 8846</li>
+              <li><a href="https://wa.me/6282334027274">+6282334027274</a></li>
             </ul>
           </div>
         </div>
