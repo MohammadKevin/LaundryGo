@@ -2,10 +2,39 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import {
+    LayoutDashboard,
+    Users,
+    ClipboardList,
+    LogOut,
+    Search,
+    Bell
+} from "lucide-react"
 
 type User = {
     username: string
     role: string
+}
+
+function SidebarItem({
+    icon: Icon,
+    label,
+    active = false
+}: {
+    icon: any
+    label: string
+    active?: boolean
+}) {
+    return (
+        <button className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
+            active 
+            ? "bg-blue-600 text-white shadow-lg shadow-blue-200"
+            : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+        }`}>
+            <Icon size={18} />
+            {label}
+        </button>
+    )
 }
 
 export default function AdminDashboard() {
@@ -14,117 +43,159 @@ export default function AdminDashboard() {
 
     useEffect(() => {
         const storedUser = localStorage.getItem("authUser")
-
         if (!storedUser) {
             router.push("/login")
             return
         }
-
         const parsedUser: User = JSON.parse(storedUser)
-
         if (parsedUser.role !== "admin") {
             router.push("/dashboard/user")
             return
         }
-
         setUser(parsedUser)
     }, [router])
 
     if (!user) {
         return (
-            <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-950 to-slate-900 text-slate-400">
-                Loading admin dashboard...
+            <div className="flex min-h-screen items-center justify-center bg-slate-50 text-slate-400 animate-pulse">
+                Loading workspace...
             </div>
         )
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-slate-100">
-            <header className="sticky top-0 z-50 flex items-center justify-between border-b border-white/10 bg-white/5 px-10 py-5 backdrop-blur-xl">
-                <h1 className="text-xl font-semibold tracking-wide">
-                    Admin<span className="text-indigo-400">Panel</span>
-                </h1>
-
-                <button
-                    onClick={() => {
-                        localStorage.removeItem("authUser")
-                        router.push("/")
-                    }}
-                    className="rounded-xl bg-gradient-to-r from-rose-600 to-red-700 px-5 py-2 text-sm font-medium shadow-lg transition hover:scale-[1.03] hover:opacity-90"
-                >
-                    Logout
-                </button>
-            </header>
-
-            <main className="p-10">
-                <div className="mb-10">
-                    <h2 className="text-2xl font-semibold">
-                        Selamat datang,{" "}
-                        <span className="text-indigo-400">{user.username}</span>
-                    </h2>
-                    <p className="mt-1 text-sm text-slate-400">
-                        Anda login sebagai <b>Administrator</b>
-                    </p>
+        <div className="flex min-h-screen bg-[#F8FAFC] text-slate-900 antialiased">
+            <aside className="fixed h-screen w-72 border-r border-slate-200 bg-white/80 backdrop-blur-md px-8 py-10">
+                <div className="flex items-center gap-3 px-2 mb-12">
+                    <div className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold">A</div>
+                    <h1 className="text-xl font-bold tracking-tight text-slate-800">
+                        LaundryGo<span className="text-blue-600">Admin</span>
+                    </h1>
                 </div>
 
-                <div className="grid gap-6 md:grid-cols-3">
+                <nav className="space-y-1.5">
+                    <p className="px-4 text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4">Main Menu</p>
+                    <SidebarItem icon={LayoutDashboard} label="Dashboard" active />
+                    <SidebarItem icon={Users} label="Manage Users" />
+                    <SidebarItem icon={ClipboardList} label="Order History" />
+                </nav>
+
+                <div className="absolute bottom-10 left-8 right-8">
+                    <button
+                        onClick={() => {
+                            localStorage.removeItem("authUser")
+                            router.push("/")
+                        }}
+                        className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-red-500 transition-colors hover:bg-red-50"
+                    >
+                        <LogOut size={18} />
+                        Sign Out
+                    </button>
+                </div>
+            </aside>
+
+            <main className="ml-72 flex-1 p-12">
+                <header className="flex items-center justify-between mb-12">
+                    <div>
+                        <h2 className="text-3xl font-bold tracking-tight text-slate-900">
+                            Welcome back, {user.username}! 👋
+                        </h2>
+                        <p className="mt-1 text-slate-500">
+                            Here's what's happening with your platform today.
+                        </p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <button className="p-2.5 rounded-full bg-white border border-slate-200 text-slate-400 hover:text-blue-600 transition-all">
+                            <Search size={20} />
+                        </button>
+                        <button className="p-2.5 rounded-full bg-white border border-slate-200 text-slate-400 hover:text-blue-600 transition-all">
+                            <Bell size={20} />
+                        </button>
+                    </div>
+                </header>
+
+                {/* Stats Cards */}
+                <div className="grid gap-8 md:grid-cols-3 mb-12">
                     {[
-                        { title: "Total Users", value: 128, color: "indigo" },
-                        { title: "Total Staff", value: 12, color: "emerald" },
-                        { title: "Total Orders", value: 342, color: "amber" },
+                        { title: "Total Users", value: "1,284", growth: "+12%" },
+                        { title: "Active Staff", value: "12", growth: "0%" },
+                        { title: "Monthly Orders", value: "342", growth: "+8%" },
                     ].map((item, i) => (
                         <div
                             key={i}
-                            className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur transition hover:-translate-y-1 hover:shadow-2xl"
+                            className="group relative rounded-3xl bg-white p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 transition-all hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]"
                         >
-                            <div
-                                className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition bg-gradient-to-br from-${item.color}-500/20 to-transparent`}
-                            />
-
-                            <h3 className="relative text-sm text-slate-400">
+                            <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
                                 {item.title}
                             </h3>
-                            <p className="relative mt-3 text-4xl font-bold tracking-tight">
-                                {item.value}
-                            </p>
+                            <div className="mt-4 flex items-end justify-between">
+                                <p className="text-4xl font-bold text-slate-900 italic-nums">
+                                    {item.value}
+                                </p>
+                                <span className="mb-1 text-xs font-bold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-lg">
+                                    {item.growth}
+                                </span>
+                            </div>
                         </div>
                     ))}
                 </div>
 
-                <div className="mt-12 rounded-2xl border border-white/10 bg-white/5 p-8 shadow-xl backdrop-blur">
-                    <h3 className="mb-6 text-lg font-semibold">
-                        Data Pengguna
-                    </h3>
+                {/* Table Section */}
+                <div className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+                    <div className="flex items-center justify-between border-b border-slate-50 p-8">
+                        <h3 className="text-lg font-bold text-slate-800">Recent Users</h3>
+                        <button className="text-sm font-semibold text-blue-600 hover:underline">View All</button>
+                    </div>
 
-                    <table className="w-full text-sm">
-                        <thead>
-                            <tr className="border-b border-white/10 text-left text-slate-400">
-                                <th className="pb-3">Username</th>
-                                <th>Role</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {[
-                                { name: "kevin", role: "admin" },
-                                { name: "dipta", role: "staff" },
-                                { name: "gibran", role: "user" },
-                            ].map((u, i) => (
-                                <tr
-                                    key={i}
-                                    className="border-b border-white/5 last:border-none hover:bg-white/5 transition"
-                                >
-                                    <td className="py-4 font-medium">
-                                        {u.name}
-                                    </td>
-                                    <td className="capitalize">{u.role}</td>
-                                    <td className="text-emerald-400 font-medium">
-                                        Aktif
-                                    </td>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left">
+                            <thead className="bg-slate-50/50 text-[11px] uppercase tracking-widest text-slate-400">
+                                <tr>
+                                    <th className="px-8 py-4 font-semibold">User Details</th>
+                                    <th className="px-8 py-4 font-semibold">Role</th>
+                                    <th className="px-8 py-4 font-semibold">Status</th>
+                                    <th className="px-8 py-4 font-semibold text-right">Action</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody className="divide-y divide-slate-50">
+                                {[
+                                    { name: "Kevin", email: "kevin@nexus.com", role: "admin" },
+                                    { name: "Dipta", email: "dipta@nexus.com", role: "staff" },
+                                    { name: "Gibran", email: "gibran@nexus.com", role: "user" },
+                                ].map((u, i) => (
+                                    <tr key={i} className="group transition-colors hover:bg-slate-50/50">
+                                        <td className="px-8 py-5">
+                                            <div className="flex items-center gap-3">
+                                                <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-slate-100 to-slate-200 border border-white shadow-sm flex items-center justify-center font-bold text-slate-500">
+                                                    {u.name[0]}
+                                                </div>
+                                                <div>
+                                                    <p className="font-semibold text-slate-900">{u.name}</p>
+                                                    <p className="text-xs text-slate-400">{u.email}</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-5">
+                                            <span className={`inline-flex rounded-full px-3 py-1 text-xs font-bold capitalize ${
+                                                u.role === 'admin' ? 'bg-blue-50 text-blue-600' : 'bg-slate-100 text-slate-600'
+                                            }`}>
+                                                {u.role}
+                                            </span>
+                                        </td>
+                                        <td className="px-8 py-5">
+                                            <div className="flex items-center gap-2">
+                                                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+                                                <span className="text-sm font-medium text-slate-600">Online</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-8 py-5 text-right">
+                                            <button className="text-slate-400 hover:text-slate-900 transition-colors font-bold text-lg">···</button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </main>
         </div>

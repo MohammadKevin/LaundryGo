@@ -116,7 +116,7 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-      <section className="container mx-auto px-6 pb-24">
+      {/* <section className="container mx-auto px-6 pb-24">
         <div className="text-center mb-14">
           <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-3">
             Brand Ambassador Kami
@@ -135,7 +135,7 @@ export default function LandingPage() {
             />
           </div>
         </div>
-      </section>
+      </section> */}
     </main>
   )
 }
