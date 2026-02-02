@@ -119,21 +119,48 @@ export default function LandingPage() {
       <section className="container mx-auto px-6 pb-24">
         <div className="text-center mb-14">
           <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-3">
-            Brand Ambassador Kami
+            Our Team
           </h2>
           <p className="text-slate-500 max-w-xl mx-auto">
-            Wajah-wajah inspiratif yang mewakili semangat LaundryGo: praktis, modern, dan terpercaya.
+            Tim profesional di balik LaundryGo yang siap memberikan layanan terbaik
+            dengan standar modern dan terpercaya.
           </p>
         </div>
 
-        <div className="flex justify-center">
-          <div className="w-full max-w-sm">
-            <BACard
-              name="Danendra Athallah Indiarto"
-              role="content creator"
-              image="/nendra1.jpeg"
-            />
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <BACard
+            name="Mohammad Kevin Arif Rudianto"
+            role="Founder & CEO"
+            image="/nendra1.jpeg"
+          />
+          <BACard
+            name="Muhammad Raffi"
+            role="Operational Manager"
+            image="/nendra1.jpeg"
+          />
+          <BACard
+            name="Dewangga Firmansyah"
+            role="Content & Marketing"
+            image="/nendra1.jpeg"
+          />
+          <div className="md:col-span-3 flex justify-center gap-8">
+            <div className="w-full max-w-sm">
+              <BACard
+                name="Danendra Athallah Indiarto"
+                role="Content & Marketing"
+                image="/nendra1.jpeg"
+              />
+            </div>
+
+            <div className="w-full max-w-sm">
+              <BACard
+                name="Pradipta Daniswara"
+                role="Content & Marketing"
+                image="/nendra1.jpeg"
+              />
+            </div>
           </div>
+
         </div>
       </section>
     </main>

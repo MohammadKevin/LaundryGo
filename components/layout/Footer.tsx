@@ -73,7 +73,7 @@ export default function Footer() {
                             Dikembangkan oleh <span className="font-medium text-blue-200">LaundryGo Dev Team</span> • Versi 1.2.0
                         </p>
                         <br />
-                        <p>Our team : Mohammad Kevin Arif Rudianto | Danendra Athallah Indiarto | Pradipta Daniswara</p>
+                        <p>Powered by <span className="font-medium text-blue-200">LaundryGo</span></p>
                     </div>
                     <div className="flex gap-6">
                         <Link href="#" className="hover:underline">
