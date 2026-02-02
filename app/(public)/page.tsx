@@ -10,7 +10,7 @@ export default function LandingPage() {
     <main className="overflow-hidden bg-white">
       <section className="relative container mx-auto px-6 py-20 lg:py-32 grid md:grid-cols-2 gap-12 items-center">
         <div className="absolute -top-24 -left-24 w-96 h-96 bg-blue-100/50 rounded-full blur-3xl -z-10" />
-        
+
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
@@ -73,24 +73,24 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
             <Feature
-                icon={<Truck className="w-6 h-6" />}
-                title="Antar Jemput"
-                desc="Kurir siap menjemput pakaianmu tepat waktu."
+              icon={<Truck className="w-6 h-6" />}
+              title="Antar Jemput"
+              desc="Kurir siap menjemput pakaianmu tepat waktu."
             />
             <Feature
-                icon={<Clock className="w-6 h-6" />}
-                title="Selesai Cepat"
-                desc="Layanan kilat 12 jam selesai dengan rapi."
+              icon={<Clock className="w-6 h-6" />}
+              title="Selesai Cepat"
+              desc="Layanan kilat 12 jam selesai dengan rapi."
             />
             <Feature
-                icon={<Shirt className="w-6 h-6" />}
-                title="Wangi & Steril"
-                desc="Deterjen premium dan pewangi tahan lama."
+              icon={<Shirt className="w-6 h-6" />}
+              title="Wangi & Steril"
+              desc="Deterjen premium dan pewangi tahan lama."
             />
             <Feature
-                icon={<ShieldCheck className="w-6 h-6" />}
-                title="Garansi Aman"
-                desc="Jaminan keamanan pakaian dari hilang/rusak."
+              icon={<ShieldCheck className="w-6 h-6" />}
+              title="Garansi Aman"
+              desc="Jaminan keamanan pakaian dari hilang/rusak."
             />
           </div>
         </div>
@@ -99,7 +99,7 @@ export default function LandingPage() {
       <section className="container mx-auto px-6 py-20">
         <div className="bg-blue-600 rounded-[2.5rem] p-10 md:p-20 text-center relative overflow-hidden shadow-2xl shadow-blue-200">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl" />
-          
+
           <h2 className="relative z-10 text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
             Siap Hidup Lebih Praktis?
           </h2>
@@ -113,6 +113,26 @@ export default function LandingPage() {
                 Mulai Sekarang
               </Button>
             </Link>
+          </div>
+        </div>
+      </section>
+      <section className="container mx-auto px-6 pb-24">
+        <div className="text-center mb-14">
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-3">
+            Brand Ambassador Kami
+          </h2>
+          <p className="text-slate-500 max-w-xl mx-auto">
+            Wajah-wajah inspiratif yang mewakili semangat LaundryGo: praktis, modern, dan terpercaya.
+          </p>
+        </div>
+
+        <div className="flex justify-center">
+          <div className="w-full max-w-sm">
+            <BACard
+              name="Danendra Athallah Indiarto"
+              role="content creator"
+              image="/nendra1.jpeg"
+            />
           </div>
         </div>
       </section>
@@ -130,7 +150,7 @@ function Feature({
   desc: string
 }) {
   return (
-    <motion.div 
+    <motion.div
       whileHover={{ y: -8 }}
       className="bg-white p-8 rounded-3xl shadow-sm border border-blue-50 text-center hover:shadow-xl hover:shadow-blue-200/40 transition-all duration-300"
     >
@@ -141,6 +161,42 @@ function Feature({
       </div>
       <h3 className="text-xl font-bold text-slate-900 mb-2">{title}</h3>
       <p className="text-sm text-slate-500 leading-relaxed">{desc}</p>
+    </motion.div>
+  )
+}
+
+function BACard({
+  name,
+  role,
+  image
+}: {
+  name: string
+  role: string
+  image: string
+}) {
+  return (
+    <motion.div
+      whileHover={{ y: -10 }}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5 }}
+      className="bg-white rounded-3xl overflow-hidden shadow-sm border border-blue-50 hover:shadow-xl hover:shadow-blue-200/40 transition-all"
+    >
+      <img
+        src={image}
+        alt={name}
+        className="h-72 w-full object-cover"
+      />
+
+      <div className="p-6 text-center">
+        <h3 className="text-xl font-bold text-slate-900">{name}</h3>
+        <p className="text-sm text-blue-600 font-medium mt-1">{role}</p>
+
+        <p className="text-sm text-slate-500 mt-4 leading-relaxed">
+          “LaundryGo bikin hidup aku jauh lebih praktis. Tinggal pesan, beres!”
+        </p>
+      </div>
     </motion.div>
   )
 }
