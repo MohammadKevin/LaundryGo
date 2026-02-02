@@ -7,6 +7,7 @@ const users = [
     { username: "kevin", password: "123456", role: "admin" },
     { username: "dipta", password: "123456", role: "staff" },
     { username: "nendra", password: "123456", role: "staff" },
+    { username: "anton", password: "12345", role: "kurir" },
     { username: "gibran", password: "12345", role: "user" },
 ]
 
