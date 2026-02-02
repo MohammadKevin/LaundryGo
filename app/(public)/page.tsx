@@ -80,7 +80,7 @@ export default function LandingPage() {
             <Feature
               icon={<Clock className="w-6 h-6" />}
               title="Selesai Cepat"
-              desc="Layanan kilat 12 jam selesai dengan rapi."
+              desc="Layanan kilat 2.5 jam selesai dengan rapi."
             />
             <Feature
               icon={<Shirt className="w-6 h-6" />}
