@@ -143,7 +143,7 @@ export default function LandingPage() {
             role="Content & Marketing"
             image="/nendra1.jpeg"
           />
-          <div className="md:col-span-3 flex justify-center gap-8">
+          {/* <div className="md:col-span-3 flex justify-center gap-8">
             <div className="w-full max-w-sm">
               <BACard
                 name="Danendra Athallah Indiarto"
@@ -159,7 +159,7 @@ export default function LandingPage() {
                 image="/nendra1.jpeg"
               />
             </div>
-          </div>
+          </div> */}
 
         </div>
       </section>
