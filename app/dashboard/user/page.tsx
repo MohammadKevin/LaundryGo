@@ -40,7 +40,6 @@ export default function UserDashboard() {
 
     return (
         <div className="min-h-screen bg-slate-100 text-slate-800">
-            {/* Header */}
             <header className="sticky top-0 z-50 flex items-center justify-between border-b bg-white px-10 py-5 shadow-sm">
                 <h1 className="text-xl font-semibold tracking-wide text-blue-600">
                     Laundry<span className="text-slate-900">Go</span>
@@ -49,7 +48,7 @@ export default function UserDashboard() {
                 <button
                     onClick={() => {
                         localStorage.removeItem("authUser")
-                        router.push("/login")
+                        router.push("/")
                     }}
                     className="rounded-lg bg-red-500 px-5 py-2 text-sm font-medium text-white transition hover:bg-red-600"
                 >
@@ -58,7 +57,6 @@ export default function UserDashboard() {
             </header>
 
             <main className="p-10">
-                {/* Welcome */}
                 <div className="mb-10">
                     <h2 className="text-2xl font-semibold">
                         Halo,{" "}
@@ -72,7 +70,6 @@ export default function UserDashboard() {
                     </p>
                 </div>
 
-                {/* Stats */}
                 <div className="grid gap-6 md:grid-cols-3">
                     {[
                         {
@@ -107,7 +104,6 @@ export default function UserDashboard() {
                     ))}
                 </div>
 
-                {/* Table */}
                 <div className="mt-12 rounded-xl border bg-white p-8 shadow-sm">
                     <h3 className="mb-6 text-lg font-semibold">
                         Pesanan Terakhir

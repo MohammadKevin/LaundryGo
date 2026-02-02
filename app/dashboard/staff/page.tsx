@@ -40,7 +40,6 @@ export default function StaffDashboard() {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            {/* Header */}
             <header className="flex items-center justify-between border-b bg-white px-8 py-4">
                 <h1 className="text-xl font-semibold text-gray-800">
                     Staff Dashboard
@@ -48,7 +47,7 @@ export default function StaffDashboard() {
                 <button
                     onClick={() => {
                         localStorage.removeItem("authUser")
-                        router.push("/login")
+                        router.push("/")
                     }}
                     className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
                 >
@@ -56,7 +55,6 @@ export default function StaffDashboard() {
                 </button>
             </header>
 
-            {/* Content */}
             <main className="p-8">
                 <div className="mb-6">
                     <h2 className="text-lg font-semibold text-gray-800">
@@ -67,7 +65,6 @@ export default function StaffDashboard() {
                     </p>
                 </div>
 
-                {/* Cards */}
                 <div className="grid gap-6 md:grid-cols-3">
                     <div className="rounded-xl border bg-white p-6 shadow-sm">
                         <h3 className="text-sm font-medium text-gray-500">
@@ -97,7 +94,6 @@ export default function StaffDashboard() {
                     </div>
                 </div>
 
-                {/* Order Table */}
                 <div className="mt-10 rounded-xl border bg-white p-6 shadow-sm">
                     <h3 className="mb-4 text-base font-semibold text-gray-800">
                         Daftar Pesanan
