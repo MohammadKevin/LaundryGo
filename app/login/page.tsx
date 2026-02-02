@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 
-// DATA USER DUMMY
 const users = [
     { username: "kevin", password: "123456", role: "admin" },
     { username: "dipta", password: "123456", role: "staff" },
@@ -17,7 +16,7 @@ export default function LoginPage() {
     const [password, setPassword] = useState("")
     const [error, setError] = useState("")
 
-    const handleLogin = (e) => {
+    const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         setError("")
 
@@ -33,7 +32,6 @@ export default function LoginPage() {
         }
 
         localStorage.setItem("authUser", JSON.stringify(foundUser))
-
         router.push(`/dashboard/${foundUser.role}`)
     }
 
@@ -74,9 +72,11 @@ export default function LoginPage() {
                         <input
                             type="text"
                             placeholder="username"
-                            className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-100"
                             value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                setUsername(e.target.value)
+                            }
+                            className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
                         />
                     </div>
 
@@ -87,15 +87,17 @@ export default function LoginPage() {
                         <input
                             type="password"
                             placeholder="••••••••"
-                            className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm focus:border-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-100"
                             value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                setPassword(e.target.value)
+                            }
+                            className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
                         />
                     </div>
 
                     <button
                         type="submit"
-                        className="w-full rounded-xl bg-blue-700 py-3 text-sm font-semibold text-white transition hover:bg-blue-800 active:scale-[0.98]"
+                        className="w-full rounded-xl bg-blue-700 py-3 text-sm font-semibold text-white hover:bg-blue-800 active:scale-[0.98]"
                     >
                         Login
                     </button>
@@ -109,7 +111,7 @@ export default function LoginPage() {
 
                 <button
                     onClick={handleGoogleLogin}
-                    className="flex w-full items-center justify-center gap-3 rounded-xl border border-gray-300 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50 active:scale-[0.98]"
+                    className="flex w-full items-center justify-center gap-3 rounded-xl border border-gray-300 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 active:scale-[0.98]"
                 >
                     <img
                         src="https://www.svgrepo.com/show/475656/google-color.svg"

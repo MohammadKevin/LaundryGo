@@ -13,7 +13,7 @@ export default function RegisterPage() {
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
 
-    const handleRegister = (e) => {
+    const handleRegister = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         setError("")
         setSuccess("")
@@ -24,10 +24,10 @@ export default function RegisterPage() {
         }
 
         const existingUsers =
-            JSON.parse(localStorage.getItem("registeredUsers")) || []
+            JSON.parse(localStorage.getItem("registeredUsers") || "[]")
 
         const userExists = existingUsers.find(
-            (user) =>
+            (user: any) =>
                 user.username === username || user.email === email
         )
 
@@ -93,10 +93,11 @@ export default function RegisterPage() {
                         </label>
                         <input
                             type="text"
-                            placeholder="username"
-                            className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
                             value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                setUsername(e.target.value)
+                            }
+                            className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
                         />
                     </div>
 
@@ -106,10 +107,11 @@ export default function RegisterPage() {
                         </label>
                         <input
                             type="email"
-                            placeholder="email@example.com"
-                            className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
                             value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                setEmail(e.target.value)
+                            }
+                            className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
                         />
                     </div>
 
@@ -119,10 +121,11 @@ export default function RegisterPage() {
                         </label>
                         <input
                             type="tel"
-                            placeholder="08xxxxxxxxxx"
-                            className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
                             value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                setPhone(e.target.value)
+                            }
+                            className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
                         />
                     </div>
 
@@ -132,10 +135,11 @@ export default function RegisterPage() {
                         </label>
                         <input
                             type="password"
-                            placeholder="••••••••"
-                            className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
                             value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                setPassword(e.target.value)
+                            }
+                            className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
                         />
                     </div>
 
