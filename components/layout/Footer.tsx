@@ -70,7 +70,7 @@ export default function Footer() {
                     <div className="space-y-1 text-center md:text-left">
                         <p>© 2026 LaundryGo. Hak Cipta Dilindungi.</p>
                         <p className="text-blue-200/70">
-                            Dikembangkan oleh <span className="font-medium text-blue-200">LaundryGo Dev Team</span> • Versi 1.0.0
+                            Dikembangkan oleh <span className="font-medium text-blue-200">LaundryGo Dev Team</span> • Versi 1.2.0
                         </p>
                         <br />
                         <p>Our team : Mohammad Kevin Arif Rudianto | Danendra Athallah Indiarto | Pradipta Daniswara</p>
