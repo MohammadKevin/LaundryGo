@@ -130,7 +130,7 @@ export default function LandingPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           <BACard
             name="Mohammad Kevin Arif Rudianto"
-            role="Founder & CEO"
+            role="Website Developer"
             image="/nendra1.jpeg"
           />
           <BACard
