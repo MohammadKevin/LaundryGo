@@ -17,7 +17,7 @@ export default function LandingPage() {
           transition={{ duration: 0.8 }}
         >
           <div className="inline-block px-4 py-1.5 mb-6 text-sm font-semibold text-blue-700 bg-blue-50 rounded-full border border-blue-100">
-            🚀 Solusi Laundry No. 1 di Kandat
+            🚀 Solusi Laundry No. 1 di Kediri
           </div>
           <h1 className="text-5xl md:text-6xl font-extrabold leading-tight text-slate-900">
             Laundry Modern, <br />
