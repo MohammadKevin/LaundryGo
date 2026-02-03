@@ -108,7 +108,7 @@ export default function LandingPage() {
           </p>
 
           <div className="relative z-10">
-            <Link href="../REGISTER/page.tsx">
+            <Link href="/register">
               <Button size="lg" variant="secondary" className="bg-white text-blue-600 hover:bg-blue-50 font-bold px-12 py-7 text-lg rounded-2xl shadow-xl transition-transform active:scale-95">
                 Mulai Sekarang
               </Button>
