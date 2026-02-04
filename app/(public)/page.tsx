@@ -14,7 +14,7 @@ export default function LandingPage() {
             ⚠️ <span className="font-semibold">Perhatian:</span> Website ini masih
             dalam tahap <b>UI & pengembangan</b>. Fitur login hanya dapat digunakan
             oleh <b>beberapa akun terbatas</b>. Jika ingin mencoba, silakan
-            <b> hubungi admin</b> untuk meminta <b>username & password <a href="https://wa.me/6282131588846?text=Halo%20saya%20ingin%20bertanya%20tentang%20LaundryGo">0821-31588846</a></b>.
+            <b> hubungi admin</b> untuk meminta <b>username & password <a href="https://wa.me/6282131588846?text=Halo%20saya%20ingin%20bertanya%20tentang%20LaundryGo">0821 - 3158 - 8846</a></b>.
           </p>
         </div>
       </div>
