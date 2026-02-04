@@ -28,7 +28,7 @@ export default function LandingPage() {
           transition={{ duration: 0.8 }}
         >
           <div className="inline-block px-4 py-1.5 mb-6 text-sm font-semibold text-blue-700 bg-blue-50 rounded-full border border-blue-100">
-            🚀 Solusi Laundry No. 1 di Kandat
+            🚀 Solusi Laundry No. 1 di Malang
           </div>
 
           <h1 className="text-5xl md:text-6xl font-extrabold leading-tight text-slate-900">
@@ -52,7 +52,7 @@ export default function LandingPage() {
           </div>
 
           <div className="mt-10 flex flex-wrap gap-4">
-            <Link href="../../app/REGISTER/page.tsx">
+            <Link href="/register">
               <Button
                 size="lg"
                 className="bg-blue-600 hover:bg-blue-700 text-white px-8 shadow-lg shadow-blue-200 transition-all active:scale-95"
@@ -61,7 +61,7 @@ export default function LandingPage() {
               </Button>
             </Link>
 
-            <Link href="../../app/LOGIN/page.tsx">
+            <Link href="/login">
               <Button
                 size="lg"
                 variant="outline"
