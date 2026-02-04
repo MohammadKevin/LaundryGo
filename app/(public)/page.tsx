@@ -17,7 +17,7 @@ export default function LandingPage() {
           transition={{ duration: 0.8 }}
         >
           <div className="inline-block px-4 py-1.5 mb-6 text-sm font-semibold text-blue-700 bg-blue-50 rounded-full border border-blue-100">
-            🚀 Solusi Laundry No. 1 di Kediri
+            🚀 Solusi Laundry No. 1 di Kandat
           </div>
           <h1 className="text-5xl md:text-6xl font-extrabold leading-tight text-slate-900">
             Laundry Modern, <br />
@@ -93,7 +93,7 @@ export default function LandingPage() {
               desc="Jaminan keamanan pakaian dari hilang/rusak."
             />
           </div>
-        </div>
+        </div>  
       </section>
 
       <section className="container mx-auto px-6 py-20">
@@ -122,8 +122,7 @@ export default function LandingPage() {
             Our Team
           </h2>
           <p className="text-slate-500 max-w-xl mx-auto">
-            Tim profesional di balik LaundryGo yang siap memberikan layanan terbaik
-            dengan standar modern dan terpercaya.
+            Tim profesional di balik berjalannya LaundryGo, yang siap memberikan layanan terbaik untuk Anda.
           </p>
         </div>
 

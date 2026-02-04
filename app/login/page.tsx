@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 
 const users = [
     { username: "kevin", password: "123456", role: "admin" },
+    { username: "lepiw", password: "123456", role: "staff" },
     { username: "dipta", password: "123456", role: "staff" },
     { username: "nendra", password: "123456", role: "staff" },
     { username: "anton", password: "12345", role: "kurir" },
