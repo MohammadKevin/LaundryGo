@@ -116,7 +116,7 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
-      <section className="container mx-auto px-6 pb-24">
+      {/* <section className="container mx-auto px-6 pb-24">
         <div className="text-center mb-14">
           <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-3">
             Our Team
@@ -142,7 +142,7 @@ export default function LandingPage() {
             role="Content & Marketing"
             image="/nendra1.jpeg"
           />
-          {/* <div className="md:col-span-3 flex justify-center gap-8">
+          <div className="md:col-span-3 flex justify-center gap-8">
             <div className="w-full max-w-sm">
               <BACard
                 name="Danendra Athallah Indiarto"
@@ -158,10 +158,10 @@ export default function LandingPage() {
                 image="/nendra1.jpeg"
               />
             </div>
-          </div> */}
+          </div>
 
         </div>
-      </section>
+      </section> */}
     </main>
   )
 }
