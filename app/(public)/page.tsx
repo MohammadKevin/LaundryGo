@@ -13,8 +13,8 @@ export default function LandingPage() {
           <p className="text-sm text-yellow-800">
             ⚠️ <span className="font-semibold">Perhatian:</span> Website ini masih
             dalam tahap <b>UI & pengembangan</b>. Fitur login hanya dapat digunakan
-            oleh <b>beberapa akun terbatas</b>. Jika ingin mencoba, silakan
-            <b> hubungi admin</b> untuk meminta <b>username & password <a href="https://wa.me/6282131588846?text=Halo%20saya%20ingin%20bertanya%20tentang%20akun%20yang%20bisa%20menggunakan%20fitur%20login">0821-3158-8846</a></b>.
+            untuk <b>akun terbatas</b>.
+            username : <b>kevin</b> password : <b>123456</b>
           </p>
         </div>
       </div>
@@ -28,7 +28,7 @@ export default function LandingPage() {
           transition={{ duration: 0.8 }}
         >
           <div className="inline-block px-4 py-1.5 mb-6 text-sm font-semibold text-blue-700 bg-blue-50 rounded-full border border-blue-100">
-            🚀 Solusi Laundry No. 1 di Malang
+            🚀 Solusi Laundry No. 1 di Kediri
           </div>
 
           <h1 className="text-5xl md:text-6xl font-extrabold leading-tight text-slate-900">

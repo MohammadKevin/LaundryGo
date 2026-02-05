@@ -73,7 +73,6 @@ export default function Footer() {
                             Dikembangkan oleh <span className="font-medium text-blue-200">LaundryGo Dev Team</span> • Versi 1.2.3
                         </p>
                         <br />
-                        <p>username : kevin password : 123456</p>
                         <br />
                         <p>Powered by <span className="font-medium text-blue-200">LaundryGo</span></p>
                     </div>
