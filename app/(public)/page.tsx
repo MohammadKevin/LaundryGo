@@ -28,7 +28,7 @@ export default function LandingPage() {
           transition={{ duration: 0.8 }}
         >
           <div className="inline-block px-4 py-1.5 mb-6 text-sm font-semibold text-blue-700 bg-blue-50 rounded-full border border-blue-100">
-            🚀 Solusi Laundry No. 1 di Kandat
+            🚀 Solusi Laundry No. 1 di Malang
           </div>
 
           <h1 className="text-5xl md:text-6xl font-extrabold leading-tight text-slate-900">
@@ -41,7 +41,7 @@ export default function LandingPage() {
           <p className="mt-6 text-lg text-slate-600 leading-relaxed max-w-lg">
             LaundryGo membantu kamu mencuci pakaian dengan teknologi modern.
             Cukup pesan lewat aplikasi, kami jemput, dan antar kembali dalam
-            keadaan bersih sempurna. DIBUAT OLEH DANENDRA
+            keadaan bersih sempurna.
           </p>
 
           <div className="mt-6 max-w-lg rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm text-blue-800">
