@@ -71,7 +71,7 @@ export default function Footer() {
                         </p>
                         <br />
                         <br />
-                        <p>Powered by <span className="font-medium text-blue-200">LaundryGo</span></p>
+                        <p>Build by <span className="font-medium text-blue-200">Danendra athallah indiarto</span></p>
                     </div>
                     <div className="flex gap-6">
                         <Link href="#" className="hover:underline">
