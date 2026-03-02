@@ -56,9 +56,6 @@ export default function Footer() {
                             <Link href="https://wa.me/6282334027274?text=Halo%20saya%20ingin%20bertanya%20tentang%20LaundryGo" className="rounded-full bg-blue-900 p-2 transition-all hover:bg-blue-600">
                                 <MessageCircle className="h-5 w-5 text-white" />
                             </Link>
-                            <Link href="#" className="rounded-full bg-blue-900 p-2 transition-all hover:bg-blue-600">
-                                <Twitter className="h-5 w-5 text-white" />
-                            </Link>
                         </div>
                         <p className="text-xs">support@laundrygo.com</p>
                     </div>

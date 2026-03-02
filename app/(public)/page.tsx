@@ -13,8 +13,7 @@ export default function LandingPage() {
           <p className="text-sm text-yellow-800">
             ⚠️ <span className="font-semibold">Perhatian:</span> Website ini masih
             dalam tahap <b>UI & pengembangan</b>. Fitur login hanya dapat digunakan
-            untuk <b>akun terbatas</b>.
-            username : <b>kevin</b> password : <b>123456</b>
+            untuk <b>akun terbatas</b>
           </p>
         </div>
       </div>
