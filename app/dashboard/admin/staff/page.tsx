@@ -26,15 +26,20 @@ type Staff = {
     telepon: string
 }
 
-function SidebarItem({
-    icon: Icon,
-    label,
-    href
-}: {
-    icon: any
+type Cabang = {
+    id: number
+    nama: string
+    alamat: string
+    telepon: string
+}
+
+type SidebarItemProps = {
+    icon: React.ElementType
     label: string
     href: string
-}) {
+}
+
+function SidebarItem({ icon: Icon, label, href }: SidebarItemProps) {
     const router = useRouter()
     const pathname = usePathname()
     const active = pathname === href
@@ -42,8 +47,8 @@ function SidebarItem({
     return (
         <button
             onClick={() => router.push(href)}
-            className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium
-        ${active ? "bg-blue-600 text-white" : "text-slate-500 hover:bg-slate-100"}`}
+            className={`flex w-full items-center gap-[12px] px-[16px] py-[12px] text-left text-[15px] transition
+            ${active ? "font-semibold text-blue-600" : "text-slate-600 hover:text-slate-900"}`}
         >
             <Icon size={18} />
             {label}
@@ -76,17 +81,19 @@ export default function StaffDashboard() {
             return
         }
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setUser(parsed)
 
         const storedStaff = localStorage.getItem("staffList")
         if (storedStaff) {
-            setStaff(JSON.parse(storedStaff))
+            const parsedStaff: Staff[] = JSON.parse(storedStaff)
+            setStaff(parsedStaff)
         }
 
         const storedCabang = localStorage.getItem("cabangList")
         if (storedCabang) {
-            const cabangParsed = JSON.parse(storedCabang)
-            setCabangList(cabangParsed.map((c: any) => c.nama))
+            const parsedCabang: Cabang[] = JSON.parse(storedCabang)
+            setCabangList(parsedCabang.map(c => c.nama))
         }
     }, [router])
 
@@ -119,100 +126,94 @@ export default function StaffDashboard() {
 
     if (!user) {
         return (
-            <div className="flex min-h-screen items-center justify-center text-slate-400">
+            <div className="flex min-h-screen items-center justify-center bg-[#c9f4ff] text-slate-400">
                 Loading...
             </div>
         )
     }
 
     return (
-        <div className="flex min-h-screen bg-slate-100">
-            <aside className="fixed h-screen w-72 border-r bg-white px-8 py-10">
-                <div className="mb-12 flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 font-bold text-white">
-                        LG
-                    </div>
-                    <h1 className="text-xl font-bold">
-                        LaundryGo <span className="text-blue-600">Admin</span>
-                    </h1>
+        <div className="flex min-h-screen bg-[#ffffff]">
+            <aside className="w-[250px] border-r border-[#5290a5] bg-[#37c2f0] p-[24px]">
+                <div className="mb-[48px] text-center">
+                    <p className="text-[28px] text-[#287c91]">LaundryGo</p>
+                    <p className="text-[#0c606e] text-[14px]">Admin Page</p>
                 </div>
 
-                <nav className="space-y-2">
+                <nav className="space-y-[4px]">
                     <SidebarItem icon={LayoutDashboard} label="Dashboard" href="/dashboard/admin" />
                     <SidebarItem icon={Store} label="Cabang" href="/dashboard/admin/branch" />
                     <SidebarItem icon={Users} label="Staff" href="/dashboard/admin/staff" />
-                    <SidebarItem icon={ClipboardList} label="Gaji" href="/dashboard/admin/gaji" />
                     <SidebarItem icon={BarChart3} label="Laporan" href="/dashboard/admin/laporan" />
                 </nav>
 
-                <div className="absolute bottom-10 left-8 right-8">
-                    <button
-                        onClick={() => {
-                            localStorage.removeItem("authUser")
-                            router.push("/")
-                        }}
-                        className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-red-500 hover:bg-red-50"
-                    >
-                        <LogOut size={18} />
-                        Logout
-                    </button>
-                </div>
+                <button
+                    onClick={() => {
+                        localStorage.removeItem("authUser")
+                        router.push("/")
+                    }}
+                    className="mt-[64px] flex items-center gap-[12px] text-red-500 text-[15px]"
+                >
+                    <LogOut size={18} />
+                    Logout
+                </button>
             </aside>
 
-            <main className="ml-72 flex-1 p-12">
-                <h2 className="mb-6 text-3xl font-bold">Manajemen Staff</h2>
+            <main className="flex-1 p-[40px]">
+                <h1 className="text-[30px] font-semibold text-slate-700">
+                    Manajemen Staff
+                </h1>
+                <p className="mb-[32px] text-slate-500 text-[14px]">
+                    Kelola data staff LaundryGo
+                </p>
 
-                <div className="mb-10 rounded-2xl border bg-white p-6 space-y-6">
-                    <h3 className="flex items-center gap-2 font-bold">
-                        <Plus size={18} />
-                        Tambah Staff
-                    </h3>
+                <div className="grid grid-cols-2 gap-[24px]">
+                    <div className="rounded-[16px] bg-white p-[24px]">
+                        <h3 className="mb-[16px] flex items-center gap-[8px] text-[16px] font-semibold">
+                            <Plus size={16} />
+                            Tambah Staff
+                        </h3>
 
-                    <form onSubmit={simpanStaff} className="grid gap-4 md:grid-cols-4">
-                        <input value={nama} onChange={e => setNama(e.target.value)} placeholder="Nama Staff" required className="rounded-xl border px-4 py-3 text-sm" />
-                        <input value={jabatan} onChange={e => setJabatan(e.target.value)} placeholder="Jabatan" required className="rounded-xl border px-4 py-3 text-sm" />
-                        <select value={cabang} onChange={e => setCabang(e.target.value)} required className="rounded-xl border px-4 py-3 text-sm">
-                            <option value="">Pilih Cabang</option>
-                            {cabangList.map((c, i) => (
-                                <option key={i} value={c}>{c}</option>
-                            ))}
-                        </select>
-                        <input value={telepon} onChange={e => setTelepon(e.target.value)} placeholder="Telepon" required className="rounded-xl border px-4 py-3 text-sm" />
+                        <form onSubmit={simpanStaff} className="space-y-[16px]">
+                            <input value={nama} onChange={e => setNama(e.target.value)} placeholder="Nama Staff" className="w-full rounded-[12px] border px-[14px] py-[10px] text-[14px]" required />
+                            <input value={jabatan} onChange={e => setJabatan(e.target.value)} placeholder="Jabatan" className="w-full rounded-[12px] border px-[14px] py-[10px] text-[14px]" required />
 
-                        <button type="submit" className="rounded-xl bg-blue-600 px-6 py-3 text-sm font-medium text-white hover:bg-blue-700 md:col-span-4">
-                            Simpan Staff
-                        </button>
-                    </form>
-                </div>
+                            <select value={cabang} onChange={e => setCabang(e.target.value)} className="w-full rounded-[12px] border px-[14px] py-[10px] text-[14px]" required>
+                                <option value="">Pilih Cabang</option>
+                                {cabangList.map((c, i) => (
+                                    <option key={i} value={c}>{c}</option>
+                                ))}
+                            </select>
 
-                <div className="rounded-2xl border bg-white">
-                    <div className="border-b p-6 font-bold">Daftar Staff</div>
-                    <table className="w-full text-sm">
-                        <thead className="bg-slate-50 text-slate-400">
-                            <tr>
-                                <th className="px-6 py-4 text-left">Nama</th>
-                                <th className="px-6 py-4">Jabatan</th>
-                                <th className="px-6 py-4">Cabang</th>
-                                <th className="px-6 py-4">Telepon</th>
-                                <th className="px-6 py-4 text-right">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y">
+                            <input value={telepon} onChange={e => setTelepon(e.target.value)} placeholder="Telepon" className="w-full rounded-[12px] border px-[14px] py-[10px] text-[14px]" required />
+
+                            <button type="submit" className="w-full rounded-[12px] bg-blue-600 py-[10px] text-[14px] text-white">
+                                Simpan Staff
+                            </button>
+                        </form>
+                    </div>
+
+                    <div className="rounded-[16px] bg-white">
+                        <div className="border-b px-[20px] py-[14px] text-[15px] font-semibold">
+                            Daftar Staff
+                        </div>
+
+                        <div className="max-h-[500px] overflow-y-auto">
                             {staff.map(s => (
-                                <tr key={s.id} className="hover:bg-slate-50">
-                                    <td className="px-6 py-4 font-medium">{s.nama}</td>
-                                    <td className="px-6 py-4">{s.jabatan}</td>
-                                    <td className="px-6 py-4">{s.cabang}</td>
-                                    <td className="px-6 py-4">{s.telepon}</td>
-                                    <td className="px-6 py-4 text-right">
-                                        <button onClick={() => hapusStaff(s.id)} className="text-red-500 hover:text-red-700">
-                                            <Trash2 size={16} />
-                                        </button>
-                                    </td>
-                                </tr>
+                                <div key={s.id} className="flex items-center justify-between border-b px-[20px] py-[14px] text-[14px]">
+                                    <div>
+                                        <p className="font-semibold">{s.nama}</p>
+                                        <p className="text-slate-500 text-[12px]">{s.jabatan} • {s.cabang}</p>
+                                        <p className="text-slate-400 text-[12px]">{s.telepon}</p>
+                                    </div>
+
+                                    <button onClick={() => hapusStaff(s.id)} className="text-red-500">
+                                        <Trash2 size={16} />
+                                    </button>
+                                </div>
                             ))}
-                        </tbody>
-                    </table>
+                        </div>
+                    </div>
                 </div>
             </main>
         </div>

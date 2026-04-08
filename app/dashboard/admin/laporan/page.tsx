@@ -6,9 +6,9 @@ import {
     LayoutDashboard,
     Store,
     Users,
-    ClipboardList,
     BarChart3,
-    LogOut
+    LogOut,
+    LucideIcon
 } from "lucide-react"
 
 type User = {
@@ -35,15 +35,13 @@ type Gaji = {
     total: number
 }
 
-function SidebarItem({
-    icon: Icon,
-    label,
-    href
-}: {
-    icon: any
+type SidebarItemProps = {
+    icon: LucideIcon
     label: string
     href: string
-}) {
+}
+
+function SidebarItem({ icon: Icon, label, href }: SidebarItemProps) {
     const router = useRouter()
     const pathname = usePathname()
     const active = pathname === href
@@ -51,8 +49,9 @@ function SidebarItem({
     return (
         <button
             onClick={() => router.push(href)}
-            className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium
-        ${active ? "bg-blue-600 text-white" : "text-slate-500 hover:bg-slate-100"}`}
+            className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium ${
+                active ? "bg-blue-600 text-white" : "text-slate-500 hover:bg-slate-100"
+            }`}
         >
             <Icon size={18} />
             {label}
@@ -63,7 +62,6 @@ function SidebarItem({
 export default function LaporanDashboard() {
     const router = useRouter()
     const [user, setUser] = useState<User | null>(null)
-
     const [cabang, setCabang] = useState<Cabang[]>([])
     const [staff, setStaff] = useState<Staff[]>([])
     const [gaji, setGaji] = useState<Gaji[]>([])
@@ -87,6 +85,7 @@ export default function LaporanDashboard() {
             return
         }
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setUser(parsed)
         loadAll()
 
@@ -134,8 +133,7 @@ export default function LaporanDashboard() {
                     <SidebarItem icon={LayoutDashboard} label="Dashboard" href="/dashboard/admin" />
                     <SidebarItem icon={Store} label="Cabang" href="/dashboard/admin/branch" />
                     <SidebarItem icon={Users} label="Staff" href="/dashboard/admin/staff" />
-                    <SidebarItem icon={ClipboardList} label="Gaji" href="/dashboard/admin/gaji" />
-                    <SidebarItem icon={BarChart3} label="laporan" href="/dashboard/admin/laporan" />
+                    <SidebarItem icon={BarChart3} label="Laporan" href="/dashboard/admin/laporan" />
                 </nav>
 
                 <div className="absolute bottom-10 left-8 right-8">

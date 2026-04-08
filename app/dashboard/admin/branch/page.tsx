@@ -82,6 +82,7 @@ export default function BranchDashboard() {
             return
         }
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setUser(parsedUser)
 
         const storedCabang = localStorage.getItem("cabangList")
@@ -139,6 +140,13 @@ export default function BranchDashboard() {
         setLayananList([])
     }
 
+    const hapusCabang = (id: number) => {
+        const filtered = cabang.filter(c => c.id !== id)
+        setCabang(filtered)
+        localStorage.setItem("cabangList", JSON.stringify(filtered))
+        window.dispatchEvent(new Event("cabang-updated"))
+    }
+
     if (!user) {
         return (
             <div className="flex min-h-screen items-center justify-center bg-[#c9f4ff] text-slate-400">
@@ -159,7 +167,6 @@ export default function BranchDashboard() {
                     <SidebarItem icon={LayoutDashboard} label="Dashboard" href="/dashboard/admin" />
                     <SidebarItem icon={Store} label="Cabang" href="/dashboard/admin/branch" />
                     <SidebarItem icon={Users} label="Staff" href="/dashboard/admin/staff" />
-                    <SidebarItem icon={ClipboardList} label="Gaji" href="/dashboard/admin/gaji" />
                     <SidebarItem icon={BarChart3} label="Laporan" href="/dashboard/admin/laporan" />
                 </nav>
 
@@ -231,18 +238,31 @@ export default function BranchDashboard() {
 
                         <div className="max-h-[500px] overflow-y-auto">
                             {cabang.map(c => (
-                                <div key={c.id} className="border-b px-[20px] py-[14px] text-[14px]">
-                                    <p className="font-semibold">{c.nama}</p>
-                                    <p className="text-slate-500 text-[12px]">{c.alamat}</p>
-                                    <p className="text-slate-400 text-[12px]">{c.telepon}</p>
+                                <div key={c.id} className="flex items-start justify-between border-b px-[20px] py-[14px] text-[14px]">
+                                    <div>
+                                        <p className="font-semibold">{c.nama}</p>
+                                        <p className="text-slate-500 text-[12px]">{c.alamat}</p>
+                                        <p className="text-slate-400 text-[12px]">{c.telepon}</p>
 
-                                    <ul className="mt-[6px] text-[13px]">
-                                        {c.layanan.map(l => (
-                                            <li key={l.id}>
-                                                {l.nama} — Rp {l.harga.toLocaleString()}
-                                            </li>
-                                        ))}
-                                    </ul>
+                                        <ul className="mt-[6px] text-[13px]">
+                                            {c.layanan.map(l => (
+                                                <li key={l.id}>
+                                                    {l.nama} — Rp {l.harga.toLocaleString()}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+
+                                    <button
+                                        onClick={() => {
+                                            if (confirm("Yakin hapus cabang ini?")) {
+                                                hapusCabang(c.id)
+                                            }
+                                        }}
+                                        className="text-red-500 hover:text-red-700"
+                                    >
+                                        <Trash2 size={16} />
+                                    </button>
                                 </div>
                             ))}
                         </div>
