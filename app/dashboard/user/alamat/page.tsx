@@ -53,9 +53,7 @@ function MenuItem({ icon: Icon, label, href }: MenuItemProps) {
     return (
         <button
             onClick={() => router.push(href)}
-            className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition ${
-                active ? "bg-blue-600 text-white" : "text-slate-500 hover:bg-slate-100"
-            }`}
+            className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium ${active ? "bg-blue-600 text-white" : "text-slate-500 hover:bg-slate-100"}`}
         >
             <Icon size={18} />
             {label}
@@ -67,7 +65,6 @@ export default function AlamatPage() {
     const router = useRouter()
 
     const [user, setUser] = useState<User | null>(null)
-
     const [label, setLabel] = useState("")
     const [detail, setDetail] = useState("")
     const [alamat, setAlamat] = useState<Alamat[]>([])
@@ -165,12 +162,13 @@ export default function AlamatPage() {
             kota: regencyName,
             kecamatan: districtName,
             kelurahan: villageName,
-            detail,
+            detail
         }
 
         const updated = [...alamat, newAlamat]
         setAlamat(updated)
         localStorage.setItem("alamatList", JSON.stringify(updated))
+        window.dispatchEvent(new Event("alamat-updated"))
 
         setLabel("")
         setDetail("")
@@ -184,23 +182,17 @@ export default function AlamatPage() {
         const filtered = alamat.filter((a) => a.id !== id)
         setAlamat(filtered)
         localStorage.setItem("alamatList", JSON.stringify(filtered))
+        window.dispatchEvent(new Event("alamat-updated"))
     }
 
     if (!user) {
-        return (
-            <div className="flex min-h-screen items-center justify-center text-slate-500">
-                Loading...
-            </div>
-        )
+        return <div className="flex min-h-screen items-center justify-center">Loading...</div>
     }
 
     return (
         <div className="flex min-h-screen bg-slate-50">
-
             <aside className="w-72 border-r bg-white px-8 py-10">
-                <h1 className="mb-10 text-xl font-bold text-blue-600">
-                    LaundryGo
-                </h1>
+                <h1 className="mb-10 text-xl font-bold text-blue-600">LaundryGo</h1>
 
                 <nav className="space-y-2">
                     <MenuItem icon={Home} label="Dashboard" href="/dashboard/user" />
@@ -226,144 +218,64 @@ export default function AlamatPage() {
                     Kelola Alamat
                 </h2>
 
-                <p className="mt-2 mb-10 text-sm text-slate-500">
-                    Tambah dan kelola alamat pengiriman kamu
-                </p>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mt-10">
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                    <form onSubmit={simpanAlamat} className="flex flex-col gap-4 bg-white p-6 rounded-2xl border">
 
-                    <div className="rounded-3xl border bg-white p-8 shadow-lg">
-                        <h3 className="mb-6 text-xl font-semibold text-blue-600">
-                            Form Alamat
-                        </h3>
+                        <input value={label} onChange={(e) => setLabel(e.target.value)} placeholder="Label" className="border p-2 rounded" />
 
-                        <form onSubmit={simpanAlamat} className="flex flex-col gap-5">
+                        <select value={provinceId} onChange={(e) => {
+                            const p = provinces.find(x => x.id === e.target.value)
+                            setProvinceId(e.target.value)
+                            setProvinceName(p?.name || "")
+                        }}>
+                            <option value="">Provinsi</option>
+                            {provinces.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                        </select>
 
-                            <input
-                                value={label}
-                                onChange={(e) => setLabel(e.target.value)}
-                                placeholder="Label alamat"
-                                className="rounded-2xl border px-4 py-3 text-sm"
-                            />
+                        <select value={regencyId} disabled={!provinceId} onChange={(e) => {
+                            const r = regencies.find(x => x.id === e.target.value)
+                            setRegencyId(e.target.value)
+                            setRegencyName(r?.name || "")
+                        }}>
+                            <option value="">Kota</option>
+                            {regencies.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
+                        </select>
 
-                            <select
-                                value={provinceId}
-                                onChange={(e) => {
-                                    const p = provinces.find(x => x.id === e.target.value)
-                                    setProvinceId(e.target.value)
-                                    setProvinceName(p?.name || "")
-                                }}
-                                className="rounded-2xl border px-4 py-3 text-sm"
-                            >
-                                <option value="">Provinsi</option>
-                                {provinces.map((p) => (
-                                    <option key={p.id} value={p.id}>
-                                        {p.name}
-                                    </option>
-                                ))}
-                            </select>
+                        <select value={districtId} disabled={!regencyId} onChange={(e) => {
+                            const d = districts.find(x => x.id === e.target.value)
+                            setDistrictId(e.target.value)
+                            setDistrictName(d?.name || "")
+                        }}>
+                            <option value="">Kecamatan</option>
+                            {districts.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+                        </select>
 
-                            <select
-                                value={regencyId}
-                                disabled={!provinceId}
-                                onChange={(e) => {
-                                    const r = regencies.find(x => x.id === e.target.value)
-                                    setRegencyId(e.target.value)
-                                    setRegencyName(r?.name || "")
-                                }}
-                                className="rounded-2xl border px-4 py-3 text-sm disabled:bg-gray-100"
-                            >
-                                <option value="">Kota</option>
-                                {regencies.map((r) => (
-                                    <option key={r.id} value={r.id}>
-                                        {r.name}
-                                    </option>
-                                ))}
-                            </select>
+                        <select value={villageId} disabled={!districtId} onChange={(e) => {
+                            const v = villages.find(x => x.id === e.target.value)
+                            setVillageId(e.target.value)
+                            setVillageName(v?.name || "")
+                        }}>
+                            <option value="">Kelurahan</option>
+                            {villages.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}
+                        </select>
 
-                            <select
-                                value={districtId}
-                                disabled={!regencyId}
-                                onChange={(e) => {
-                                    const d = districts.find(x => x.id === e.target.value)
-                                    setDistrictId(e.target.value)
-                                    setDistrictName(d?.name || "")
-                                }}
-                                className="rounded-2xl border px-4 py-3 text-sm disabled:bg-gray-100"
-                            >
-                                <option value="">Kecamatan</option>
-                                {districts.map((d) => (
-                                    <option key={d.id} value={d.id}>
-                                        {d.name}
-                                    </option>
-                                ))}
-                            </select>
+                        <textarea value={detail} onChange={(e) => setDetail(e.target.value)} placeholder="Detail alamat" />
 
-                            <select
-                                value={villageId}
-                                disabled={!districtId}
-                                onChange={(e) => {
-                                    const v = villages.find(x => x.id === e.target.value)
-                                    setVillageId(e.target.value)
-                                    setVillageName(v?.name || "")
-                                }}
-                                className="rounded-2xl border px-4 py-3 text-sm disabled:bg-gray-100"
-                            >
-                                <option value="">Kelurahan</option>
-                                {villages.map((v) => (
-                                    <option key={v.id} value={v.id}>
-                                        {v.name}
-                                    </option>
-                                ))}
-                            </select>
+                        <button className="bg-blue-600 text-white py-2 rounded">Simpan</button>
+                    </form>
 
-                            <textarea
-                                value={detail}
-                                onChange={(e) => setDetail(e.target.value)}
-                                placeholder="Detail alamat"
-                                className="rounded-2xl border px-4 py-3 text-sm"
-                            />
-
-                            <button className="rounded-2xl bg-blue-600 py-3 text-white font-semibold">
-                                Simpan
-                            </button>
-
-                        </form>
-                    </div>
-
-                    <div className="rounded-3xl border bg-white p-8 shadow-lg">
-                        <h3 className="mb-6 text-xl font-semibold text-slate-800">
-                            Daftar Alamat
-                        </h3>
-
-                        {alamat.length === 0 ? (
-                            <p className="text-slate-500">Belum ada alamat</p>
-                        ) : (
-                            <div className="space-y-4">
-                                {alamat.map((a) => (
-                                    <div key={a.id} className="rounded-2xl border p-4">
-                                        <div className="font-semibold">{a.label}</div>
-                                        <div className="text-sm text-slate-600">
-                                            {a.provinsi}, {a.kota}, {a.kecamatan}, {a.kelurahan}
-                                        </div>
-                                        <div className="text-xs text-slate-500 mt-1">
-                                            {a.detail}
-                                        </div>
-
-                                        <button
-                                            onClick={() => hapus(a.id)}
-                                            className="mt-3 rounded-lg bg-red-500 px-3 py-1 text-xs text-white"
-                                        >
-                                            Hapus
-                                        </button>
-                                    </div>
-                                ))}
+                    <div className="space-y-4">
+                        {alamat.map(a => (
+                            <div key={a.id} className="border p-4 rounded-xl">
+                                <div>{a.label}</div>
+                                <div className="text-sm">{a.provinsi}, {a.kota}, {a.kecamatan}, {a.kelurahan}</div>
+                                <button onClick={() => hapus(a.id)} className="text-red-500 text-sm mt-2">Hapus</button>
                             </div>
-                        )}
+                        ))}
                     </div>
 
                 </div>
-
             </main>
         </div>
     )
