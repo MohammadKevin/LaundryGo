@@ -32,15 +32,13 @@ type Cabang = {
     layanan: Layanan[]
 }
 
-function SidebarItem({
-    icon: Icon,
-    label,
-    href
-}: {
-    icon: any
+type SidebarItemProps = {
+    icon: React.ElementType
     label: string
     href: string
-}) {
+}
+
+function SidebarItem({ icon: Icon, label, href }: SidebarItemProps) {
     const router = useRouter()
     const pathname = usePathname()
     const active = pathname === href
@@ -48,8 +46,8 @@ function SidebarItem({
     return (
         <button
             onClick={() => router.push(href)}
-            className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium
-        ${active ? "bg-blue-600 text-white" : "text-slate-500 hover:bg-slate-100"}`}
+            className={`flex w-full items-center gap-[12px] px-[16px] py-[12px] text-left text-[15px] transition
+            ${active ? "font-semibold text-blue-600" : "text-slate-600 hover:text-slate-900"}`}
         >
             <Icon size={18} />
             {label}
@@ -88,7 +86,8 @@ export default function BranchDashboard() {
 
         const storedCabang = localStorage.getItem("cabangList")
         if (storedCabang) {
-            const normalized = JSON.parse(storedCabang).map((c: any) => ({
+            const parsed = JSON.parse(storedCabang) as Cabang[]
+            const normalized = parsed.map((c) => ({
                 id: c.id,
                 nama: c.nama,
                 alamat: c.alamat,
@@ -102,21 +101,19 @@ export default function BranchDashboard() {
     const tambahLayanan = () => {
         if (!layananNama || !layananHarga) return
 
-        setLayananList([
-            ...layananList,
-            {
-                id: Date.now(),
-                nama: layananNama,
-                harga: Number(layananHarga)
-            }
-        ])
+        const newItem: Layanan = {
+            id: Date.now(),
+            nama: layananNama,
+            harga: Number(layananHarga)
+        }
 
+        setLayananList((prev) => [...prev, newItem])
         setLayananNama("")
         setLayananHarga("")
     }
 
     const hapusLayanan = (id: number) => {
-        setLayananList(layananList.filter(l => l.id !== id))
+        setLayananList((prev) => prev.filter((l) => l.id !== id))
     }
 
     const simpanCabang = (e: React.FormEvent) => {
@@ -144,25 +141,21 @@ export default function BranchDashboard() {
 
     if (!user) {
         return (
-            <div className="flex min-h-screen items-center justify-center text-slate-400">
+            <div className="flex min-h-screen items-center justify-center bg-[#c9f4ff] text-slate-400">
                 Loading...
             </div>
         )
     }
 
     return (
-        <div className="flex min-h-screen bg-slate-100">
-            <aside className="fixed h-screen w-72 border-r bg-white px-8 py-10">
-                <div className="mb-12 flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 font-bold text-white">
-                        LG
-                    </div>
-                    <h1 className="text-xl font-bold">
-                        LaundryGo <span className="text-blue-600">Admin</span>
-                    </h1>
+        <div className="flex min-h-screen bg-[#ffffff]">
+            <aside className="w-[250px] border-r border-[#5290a5] bg-[#37c2f0] p-[24px]">
+                <div className="mb-[48px] text-center">
+                    <p className="text-[28px] text-[#287c91]">LaundryGo</p>
+                    <p className="text-[#0c606e] text-[14px]">Admin Page</p>
                 </div>
 
-                <nav className="space-y-2">
+                <nav className="space-y-[4px]">
                     <SidebarItem icon={LayoutDashboard} label="Dashboard" href="/dashboard/admin" />
                     <SidebarItem icon={Store} label="Cabang" href="/dashboard/admin/branch" />
                     <SidebarItem icon={Users} label="Staff" href="/dashboard/admin/staff" />
@@ -170,81 +163,89 @@ export default function BranchDashboard() {
                     <SidebarItem icon={BarChart3} label="Laporan" href="/dashboard/admin/laporan" />
                 </nav>
 
-                <div className="absolute bottom-10 left-8 right-8">
-                    <button
-                        onClick={() => {
-                            localStorage.removeItem("authUser")
-                            router.push("/")
-                        }}
-                        className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-red-500 hover:bg-red-50"
-                    >
-                        <LogOut size={18} />
-                        Logout
-                    </button>
-                </div>
+                <button
+                    onClick={() => {
+                        localStorage.removeItem("authUser")
+                        router.push("/")
+                    }}
+                    className="mt-[64px] flex items-center gap-[12px] text-red-500 text-[15px]"
+                >
+                    <LogOut size={18} />
+                    Logout
+                </button>
             </aside>
 
-            <main className="ml-72 flex-1 p-12">
-                <h2 className="mb-6 text-3xl font-bold">Manajemen Cabang</h2>
+            <main className="flex-1 p-[40px]">
+                <h1 className="text-[30px] font-semibold text-slate-700">
+                    Manajemen Cabang
+                </h1>
+                <p className="mb-[32px] text-slate-500 text-[14px]">
+                    Kelola data cabang dan layanan LaundryGo
+                </p>
 
-                <div className="mb-10 rounded-2xl border bg-white p-6 space-y-6">
-                    <h3 className="flex items-center gap-2 font-bold">
-                        <Plus size={18} />
-                        Tambah Cabang
-                    </h3>
+                <div className="grid grid-cols-2 gap-[24px] mb-[40px]">
+                    <div className="rounded-[16px] bg-white p-[24px]">
+                        <h3 className="mb-[16px] flex items-center gap-[8px] text-[16px] font-semibold">
+                            <Plus size={16} />
+                            Tambah Cabang
+                        </h3>
 
-                    <form onSubmit={simpanCabang} className="space-y-6">
-                        <div className="grid gap-4 md:grid-cols-3">
-                            <input value={nama} onChange={e => setNama(e.target.value)} placeholder="Nama Cabang" required className="rounded-xl border px-4 py-3 text-sm" />
-                            <input value={telepon} onChange={e => setTelepon(e.target.value)} placeholder="Telepon" required className="rounded-xl border px-4 py-3 text-sm" />
-                            <input value={alamat} onChange={e => setAlamat(e.target.value)} placeholder="Alamat" required className="rounded-xl border px-4 py-3 text-sm md:col-span-3" />
-                        </div>
+                        <form onSubmit={simpanCabang} className="space-y-[16px]">
+                            <input value={nama} onChange={e => setNama(e.target.value)} placeholder="Nama Cabang" className="w-full rounded-[12px] border px-[14px] py-[10px] text-[14px]" required />
+                            <input value={telepon} onChange={e => setTelepon(e.target.value)} placeholder="Telepon" className="w-full rounded-[12px] border px-[14px] py-[10px] text-[14px]" required />
+                            <input value={alamat} onChange={e => setAlamat(e.target.value)} placeholder="Alamat" className="w-full rounded-[12px] border px-[14px] py-[10px] text-[14px]" required />
 
-                        <div className="rounded-xl border p-4 space-y-4">
-                            <p className="font-semibold">Layanan</p>
+                            <div className="rounded-[12px] border p-[16px] space-y-[12px]">
+                                <p className="text-[14px] font-medium">Layanan</p>
 
-                            <div className="flex gap-3">
-                                <input value={layananNama} onChange={e => setLayananNama(e.target.value)} placeholder="Cuci + Kering" className="flex-1 rounded-xl border px-4 py-2 text-sm" />
-                                <input value={layananHarga} onChange={e => setLayananHarga(e.target.value)} placeholder="Harga" type="number" className="w-40 rounded-xl border px-4 py-2 text-sm" />
-                                <button type="button" onClick={tambahLayanan} className="rounded-xl bg-slate-900 px-4 text-white">
-                                    +
-                                </button>
-                            </div>
+                                <div className="flex gap-[8px]">
+                                    <input value={layananNama} onChange={e => setLayananNama(e.target.value)} placeholder="Nama layanan" className="flex-1 rounded-[10px] border px-[10px] py-[8px] text-[13px]" />
+                                    <input value={layananHarga} onChange={e => setLayananHarga(e.target.value)} placeholder="Harga" type="number" className="w-[120px] rounded-[10px] border px-[10px] py-[8px] text-[13px]" />
+                                    <button type="button" onClick={tambahLayanan} className="rounded-[10px] bg-slate-900 px-[12px] text-white">
+                                        +
+                                    </button>
+                                </div>
 
-                            <div className="space-y-2">
-                                {layananList.map(l => (
-                                    <div key={l.id} className="flex items-center justify-between rounded-lg bg-slate-50 px-4 py-2 text-sm">
-                                        <span>{l.nama} — Rp {l.harga.toLocaleString()}</span>
-                                        <button type="button" onClick={() => hapusLayanan(l.id)} className="text-red-500">
-                                            <Trash2 size={16} />
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        <button type="submit" className="w-full rounded-xl bg-blue-600 py-3 text-sm font-medium text-white hover:bg-blue-700">
-                            Simpan Cabang
-                        </button>
-                    </form>
-                </div>
-
-                <div className="rounded-2xl border bg-white">
-                    <div className="border-b p-6 font-bold">Daftar Cabang</div>
-                    <div className="divide-y">
-                        {cabang.map(c => (
-                            <div key={c.id} className="p-6 space-y-2">
-                                <p className="font-semibold">{c.nama}</p>
-                                <p className="text-sm text-slate-500">{c.alamat} • {c.telepon}</p>
-                                <ul className="mt-2 list-disc pl-5 text-sm">
-                                    {(c.layanan || []).map(l => (
-                                        <li key={l.id}>
-                                            {l.nama} — Rp {l.harga.toLocaleString()}
-                                        </li>
+                                <div className="space-y-[6px]">
+                                    {layananList.map(l => (
+                                        <div key={l.id} className="flex items-center justify-between rounded-[10px] bg-slate-50 px-[10px] py-[8px] text-[13px]">
+                                            <span>{l.nama} — Rp {l.harga.toLocaleString()}</span>
+                                            <button type="button" onClick={() => hapusLayanan(l.id)} className="text-red-500">
+                                                <Trash2 size={14} />
+                                            </button>
+                                        </div>
                                     ))}
-                                </ul>
+                                </div>
                             </div>
-                        ))}
+
+                            <button type="submit" className="w-full rounded-[12px] bg-blue-600 py-[10px] text-[14px] text-white">
+                                Simpan Cabang
+                            </button>
+                        </form>
+                    </div>
+
+                    <div className="rounded-[16px] bg-white">
+                        <div className="border-b px-[20px] py-[14px] text-[15px] font-semibold">
+                            Daftar Cabang
+                        </div>
+
+                        <div className="max-h-[500px] overflow-y-auto">
+                            {cabang.map(c => (
+                                <div key={c.id} className="border-b px-[20px] py-[14px] text-[14px]">
+                                    <p className="font-semibold">{c.nama}</p>
+                                    <p className="text-slate-500 text-[12px]">{c.alamat}</p>
+                                    <p className="text-slate-400 text-[12px]">{c.telepon}</p>
+
+                                    <ul className="mt-[6px] text-[13px]">
+                                        {c.layanan.map(l => (
+                                            <li key={l.id}>
+                                                {l.nama} — Rp {l.harga.toLocaleString()}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </main>

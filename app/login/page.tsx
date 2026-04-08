@@ -7,8 +7,9 @@ const users = [
     { username: "kevin", password: "123456", role: "admin" },
     { username: "dipta", password: "12345", role: "staff" },
     { username: "nendra", password: "12345", role: "staff" },
-    { username: "anton", password: "12345", role: "kurir" },
     { username: "gibran", password: "12345", role: "user" },
+    { username: "budi", password: "12345", role: "user" },
+    { username: "anton", password: "12345", role: "kurir" },
 ]
 
 export default function LoginPage() {

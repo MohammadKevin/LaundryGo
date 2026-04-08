@@ -9,13 +9,43 @@ type User = {
     role: string
 }
 
+type Province = {
+    id: string
+    name: string
+}
+
+type Regency = {
+    id: string
+    name: string
+}
+
+type District = {
+    id: string
+    name: string
+}
+
+type Village = {
+    id: string
+    name: string
+}
+
 type Alamat = {
     id: number
     label: string
+    provinsi: string
+    kota: string
+    kecamatan: string
+    kelurahan: string
     detail: string
 }
 
-function MenuItem({ icon: Icon, label, href }: any) {
+type MenuItemProps = {
+    icon: React.ElementType
+    label: string
+    href: string
+}
+
+function MenuItem({ icon: Icon, label, href }: MenuItemProps) {
     const router = useRouter()
     const pathname = usePathname()
     const active = pathname === href
@@ -23,8 +53,9 @@ function MenuItem({ icon: Icon, label, href }: any) {
     return (
         <button
             onClick={() => router.push(href)}
-            className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium
-            ${active ? "bg-blue-600 text-white" : "text-slate-500 hover:bg-slate-100"}`}
+            className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition ${
+                active ? "bg-blue-600 text-white" : "text-slate-500 hover:bg-slate-100"
+            }`}
         >
             <Icon size={18} />
             {label}
@@ -34,11 +65,27 @@ function MenuItem({ icon: Icon, label, href }: any) {
 
 export default function AlamatPage() {
     const router = useRouter()
+
     const [user, setUser] = useState<User | null>(null)
 
     const [label, setLabel] = useState("")
     const [detail, setDetail] = useState("")
     const [alamat, setAlamat] = useState<Alamat[]>([])
+
+    const [provinces, setProvinces] = useState<Province[]>([])
+    const [regencies, setRegencies] = useState<Regency[]>([])
+    const [districts, setDistricts] = useState<District[]>([])
+    const [villages, setVillages] = useState<Village[]>([])
+
+    const [provinceId, setProvinceId] = useState("")
+    const [regencyId, setRegencyId] = useState("")
+    const [districtId, setDistrictId] = useState("")
+    const [villageId, setVillageId] = useState("")
+
+    const [provinceName, setProvinceName] = useState("")
+    const [regencyName, setRegencyName] = useState("")
+    const [districtName, setDistrictName] = useState("")
+    const [villageName, setVillageName] = useState("")
 
     useEffect(() => {
         const storedUser = localStorage.getItem("authUser")
@@ -47,12 +94,14 @@ export default function AlamatPage() {
             return
         }
 
-        const parsed = JSON.parse(storedUser)
+        const parsed: User = JSON.parse(storedUser)
+
         if (parsed.role !== "user") {
             router.push("/dashboard/admin")
             return
         }
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setUser(parsed)
 
         const storedAlamat = localStorage.getItem("alamatList")
@@ -61,13 +110,62 @@ export default function AlamatPage() {
         }
     }, [router])
 
-    const simpanAlamat = (e: React.FormEvent) => {
+    useEffect(() => {
+        fetch("https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json")
+            .then((res) => res.json())
+            .then((data: Province[]) => setProvinces(data))
+    }, [])
+
+    useEffect(() => {
+        if (!provinceId) return
+
+        fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${provinceId}.json`)
+            .then((res) => res.json())
+            .then((data: Regency[]) => setRegencies(data))
+
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setRegencyId("")
+        setDistrictId("")
+        setVillageId("")
+        setDistricts([])
+        setVillages([])
+    }, [provinceId])
+
+    useEffect(() => {
+        if (!regencyId) return
+
+        fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/districts/${regencyId}.json`)
+            .then((res) => res.json())
+            .then((data: District[]) => setDistricts(data))
+
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setDistrictId("")
+        setVillageId("")
+        setVillages([])
+    }, [regencyId])
+
+    useEffect(() => {
+        if (!districtId) return
+
+        fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/villages/${districtId}.json`)
+            .then((res) => res.json())
+            .then((data: Village[]) => setVillages(data))
+
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setVillageId("")
+    }, [districtId])
+
+    const simpanAlamat = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
         const newAlamat: Alamat = {
             id: Date.now(),
             label,
-            detail
+            provinsi: provinceName,
+            kota: regencyName,
+            kecamatan: districtName,
+            kelurahan: villageName,
+            detail,
         }
 
         const updated = [...alamat, newAlamat]
@@ -76,19 +174,29 @@ export default function AlamatPage() {
 
         setLabel("")
         setDetail("")
+        setProvinceId("")
+        setRegencyId("")
+        setDistrictId("")
+        setVillageId("")
+    }
+
+    const hapus = (id: number) => {
+        const filtered = alamat.filter((a) => a.id !== id)
+        setAlamat(filtered)
+        localStorage.setItem("alamatList", JSON.stringify(filtered))
     }
 
     if (!user) {
         return (
-            <div className="flex min-h-screen items-center justify-center">
+            <div className="flex min-h-screen items-center justify-center text-slate-500">
                 Loading...
             </div>
         )
     }
 
     return (
-        <div className="flex min-h-screen bg-slate-100">
-            {/* SIDEBAR */}
+        <div className="flex min-h-screen bg-slate-50">
+
             <aside className="w-72 border-r bg-white px-8 py-10">
                 <h1 className="mb-10 text-xl font-bold text-blue-600">
                     LaundryGo
@@ -112,44 +220,150 @@ export default function AlamatPage() {
                 </button>
             </aside>
 
-            {/* MAIN CONTENT */}
             <main className="flex-1 p-12">
-                <h2 className="mb-6 text-3xl font-bold">Alamat Saya</h2>
 
-                <form onSubmit={simpanAlamat} className="mb-10 max-w-md space-y-4">
-                    <input
-                        value={label}
-                        onChange={e => setLabel(e.target.value)}
-                        placeholder="Rumah / Kos / Kantor"
-                        required
-                        className="w-full rounded-xl border px-4 py-3"
-                    />
-                    <textarea
-                        value={detail}
-                        onChange={e => setDetail(e.target.value)}
-                        placeholder="Alamat lengkap"
-                        required
-                        className="w-full rounded-xl border px-4 py-3"
-                    />
-                    <button className="rounded-xl bg-blue-600 px-6 py-3 text-white">
-                        Simpan Alamat
-                    </button>
-                </form>
+                <h2 className="text-3xl font-semibold text-slate-800">
+                    Kelola Alamat
+                </h2>
 
-                <div className="space-y-3 max-w-md">
-                    {alamat.length === 0 && (
-                        <div className="text-sm text-slate-500">
-                            Belum ada alamat tersimpan
-                        </div>
-                    )}
+                <p className="mt-2 mb-10 text-sm text-slate-500">
+                    Tambah dan kelola alamat pengiriman kamu
+                </p>
 
-                    {alamat.map(a => (
-                        <div key={a.id} className="rounded-xl border bg-white p-4">
-                            <p className="font-semibold">{a.label}</p>
-                            <p className="text-sm text-slate-500">{a.detail}</p>
-                        </div>
-                    ))}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+
+                    <div className="rounded-3xl border bg-white p-8 shadow-lg">
+                        <h3 className="mb-6 text-xl font-semibold text-blue-600">
+                            Form Alamat
+                        </h3>
+
+                        <form onSubmit={simpanAlamat} className="flex flex-col gap-5">
+
+                            <input
+                                value={label}
+                                onChange={(e) => setLabel(e.target.value)}
+                                placeholder="Label alamat"
+                                className="rounded-2xl border px-4 py-3 text-sm"
+                            />
+
+                            <select
+                                value={provinceId}
+                                onChange={(e) => {
+                                    const p = provinces.find(x => x.id === e.target.value)
+                                    setProvinceId(e.target.value)
+                                    setProvinceName(p?.name || "")
+                                }}
+                                className="rounded-2xl border px-4 py-3 text-sm"
+                            >
+                                <option value="">Provinsi</option>
+                                {provinces.map((p) => (
+                                    <option key={p.id} value={p.id}>
+                                        {p.name}
+                                    </option>
+                                ))}
+                            </select>
+
+                            <select
+                                value={regencyId}
+                                disabled={!provinceId}
+                                onChange={(e) => {
+                                    const r = regencies.find(x => x.id === e.target.value)
+                                    setRegencyId(e.target.value)
+                                    setRegencyName(r?.name || "")
+                                }}
+                                className="rounded-2xl border px-4 py-3 text-sm disabled:bg-gray-100"
+                            >
+                                <option value="">Kota</option>
+                                {regencies.map((r) => (
+                                    <option key={r.id} value={r.id}>
+                                        {r.name}
+                                    </option>
+                                ))}
+                            </select>
+
+                            <select
+                                value={districtId}
+                                disabled={!regencyId}
+                                onChange={(e) => {
+                                    const d = districts.find(x => x.id === e.target.value)
+                                    setDistrictId(e.target.value)
+                                    setDistrictName(d?.name || "")
+                                }}
+                                className="rounded-2xl border px-4 py-3 text-sm disabled:bg-gray-100"
+                            >
+                                <option value="">Kecamatan</option>
+                                {districts.map((d) => (
+                                    <option key={d.id} value={d.id}>
+                                        {d.name}
+                                    </option>
+                                ))}
+                            </select>
+
+                            <select
+                                value={villageId}
+                                disabled={!districtId}
+                                onChange={(e) => {
+                                    const v = villages.find(x => x.id === e.target.value)
+                                    setVillageId(e.target.value)
+                                    setVillageName(v?.name || "")
+                                }}
+                                className="rounded-2xl border px-4 py-3 text-sm disabled:bg-gray-100"
+                            >
+                                <option value="">Kelurahan</option>
+                                {villages.map((v) => (
+                                    <option key={v.id} value={v.id}>
+                                        {v.name}
+                                    </option>
+                                ))}
+                            </select>
+
+                            <textarea
+                                value={detail}
+                                onChange={(e) => setDetail(e.target.value)}
+                                placeholder="Detail alamat"
+                                className="rounded-2xl border px-4 py-3 text-sm"
+                            />
+
+                            <button className="rounded-2xl bg-blue-600 py-3 text-white font-semibold">
+                                Simpan
+                            </button>
+
+                        </form>
+                    </div>
+
+                    <div className="rounded-3xl border bg-white p-8 shadow-lg">
+                        <h3 className="mb-6 text-xl font-semibold text-slate-800">
+                            Daftar Alamat
+                        </h3>
+
+                        {alamat.length === 0 ? (
+                            <p className="text-slate-500">Belum ada alamat</p>
+                        ) : (
+                            <div className="space-y-4">
+                                {alamat.map((a) => (
+                                    <div key={a.id} className="rounded-2xl border p-4">
+                                        <div className="font-semibold">{a.label}</div>
+                                        <div className="text-sm text-slate-600">
+                                            {a.provinsi}, {a.kota}, {a.kecamatan}, {a.kelurahan}
+                                        </div>
+                                        <div className="text-xs text-slate-500 mt-1">
+                                            {a.detail}
+                                        </div>
+
+                                        <button
+                                            onClick={() => hapus(a.id)}
+                                            className="mt-3 rounded-lg bg-red-500 px-3 py-1 text-xs text-white"
+                                        >
+                                            Hapus
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
                 </div>
+
             </main>
         </div>
     )

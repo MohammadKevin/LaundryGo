@@ -43,6 +43,7 @@ export default function UserDashboard() {
             return
         }
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setUser(parsed)
     }, [router])
 
@@ -78,6 +79,86 @@ export default function UserDashboard() {
                 <p className="mt-2 text-slate-500">
                     Selamat datang di LaundryGo, silakan buat order laundry kamu
                 </p>
+
+                <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+
+                    <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm hover:shadow-md transition">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-base font-semibold text-gray-800">Order Aktif</h3>
+                            <span className="text-xs px-2 py-1 rounded-full bg-green-50 text-green-600">
+                                Status
+                            </span>
+                        </div>
+
+                        <p className="mt-3 text-2xl font-bold text-gray-900">
+                            2 Order
+                        </p>
+                        <p className="text-xs text-gray-400 mt-1">
+                            Order yang sedang diproses akan tampil di sini
+                        </p>
+                    </div>
+
+                    <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm hover:shadow-md transition">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-base font-semibold text-gray-800">Total Pengeluaran</h3>
+                        </div>
+
+                        <p className="mt-3 text-2xl font-bold text-gray-900">
+                            Rp 0
+                        </p>
+
+                        <p className="text-xs text-gray-400 mt-1">
+                            Semua transaksi akan tampil di sini
+                        </p>
+                    </div>
+
+                </div>
+                <div className="mt-20 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+                    <h3 className="mb-4 text-lg font-semibold text-gray-800">
+                        Riwayat Order
+                    </h3>
+
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full text-sm">
+                            <thead>
+                                <tr className="border-b bg-gray-50 text-left text-gray-600">
+                                    <th className="px-4 py-3">No</th>
+                                    <th className="px-4 py-3">No Order</th>
+                                    <th className="px-4 py-3">Layanan</th>
+                                    <th className="px-4 py-3">Berat</th>
+                                    <th className="px-4 py-3">Harga</th>
+                                    <th className="px-4 py-3">Total</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr className="border-b hover:bg-gray-50">
+                                    <td className="px-4 py-3">1</td>
+                                    <td className="px-4 py-3 font-medium">ORD-001</td>
+                                    <td className="px-4 py-3">Cuci Kering</td>
+                                    <td className="px-4 py-3">3 kg</td>
+                                    <td className="px-4 py-3">Rp 7.000</td>
+                                    <td className="px-4 py-3 font-semibold">Rp 21.000</td>
+                                </tr>
+
+                                <tr className="border-b hover:bg-gray-50">
+                                    <td className="px-4 py-3">2</td>
+                                    <td className="px-4 py-3 font-medium">ORD-002</td>
+                                    <td className="px-4 py-3">Setrika</td>
+                                    <td className="px-4 py-3">2 kg</td>
+                                    <td className="px-4 py-3">Rp 5.000</td>
+                                    <td className="px-4 py-3 font-semibold">Rp 10.000</td>
+                                </tr>
+
+                                <tr>
+                                    <td colSpan={6} className="px-4 py-6 text-center text-gray-500">
+                                        Belum ada riwayat order.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </main>
         </div>
     )

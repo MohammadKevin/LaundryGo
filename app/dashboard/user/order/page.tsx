@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { Home, ShoppingCart, MapPin, LogOut } from "lucide-react"
+import { div } from "framer-motion/client"
 
 type User = {
     username: string
@@ -54,6 +55,7 @@ export default function OrderPage() {
             return
         }
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setUser(parsed)
 
         const storedOrders = localStorage.getItem("orderList")
@@ -91,6 +93,14 @@ export default function OrderPage() {
         )
     }
 
+    function setAlamat(value: string): void {
+        throw new Error("Function not implemented.")
+    }
+
+    function setPhone(value: string): void {
+        throw new Error("Function not implemented.")
+    }
+
     return (
         <div className="flex min-h-screen bg-slate-100">
             {/* SIDEBAR */}
@@ -117,52 +127,92 @@ export default function OrderPage() {
                 </button>
             </aside>
 
-            {/* MAIN CONTENT */}
             <main className="flex-1 p-12">
-                <h2 className="mb-6 text-3xl font-bold">Order Laundry</h2>
+                <h2 className="mb-6 text-[38px] text-[#1f6cc4]">
+                    Hai, {user.username} 👋
+                </h2>
+                <p className="mb-10 text-[18px] text-slate-500">
+                    Silahkan buat order di bawah ini
+                </p>
 
-                <form onSubmit={buatOrder} className="mb-10 max-w-md space-y-4">
-                    <input
-                        value={layanan}
-                        onChange={e => setLayanan(e.target.value)}
-                        placeholder="Layanan (Cuci + Kering)"
-                        required
-                        className="w-full rounded-xl border px-4 py-3"
-                    />
-                    <input
-                        type="number"
-                        value={berat}
-                        onChange={e => setBerat(e.target.value)}
-                        placeholder="Berat (kg)"
-                        required
-                        className="w-full rounded-xl border px-4 py-3"
-                    />
-                    <button className="rounded-xl bg-blue-600 px-6 py-3 text-white">
-                        Buat Order
-                    </button>
-                </form>
+                <div className="flex min-h-[90px] items-center justify-center">
+                    <div className="w-[750px] rounded-2xl border border-gray-200 bg-white p-8 shadow-[0_20px_60px_rgba(0,0,0,0.08)] shadow-gray-100">
+                        <h3 className="mb-6 text-[23px] font-semibold text-[#1f6cc4] text-center">
+                            Form Order Laundry
+                        </h3>
 
-                <div className="rounded-xl border bg-white">
-                    <div className="border-b p-4 font-semibold">
-                        Riwayat Order
+                        <form onSubmit={buatOrder} className="flex flex-col gap-6">
+                            <div>
+                                <label className="mb-2 block text-sm font-medium text-gray-700">
+                                    Layanan
+                                </label>
+                                <select
+                                    value={layanan}
+                                    onChange={(e) => setLayanan(e.target.value)}
+                                    className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
+                                >
+                                    <option value="">Pilih layanan</option>
+                                    <option value="cuci">Cuci</option>
+                                    <option value="setrika">Setrika</option>
+                                    <option value="cuci-setrika">Cuci + Setrika</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className="mb-2 block text-sm font-medium text-gray-700">
+                                    Berat (kg)
+                                </label>
+                                <input
+                                    type="number"
+                                    placeholder="Masukkan berat laundry"
+                                    value={berat}
+                                    onChange={(e) => setBerat(e.target.value)}
+                                    className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="mb-2 block text-sm font-medium text-gray-700">
+                                    Alamat
+                                </label>
+                                <select
+                                    value={""}
+                                    onChange={(e) => setAlamat(e.target.value)}
+                                    className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
+                                >
+                                    <option value="">Pilih Alamat</option>
+                                    <option value="alamat">Jl. Jend. Sudirman No. 1 Kota Kediri</option>
+                                    <option value="alamat2">Jl. Diponegoro No. 10 Kota Kediri</option>
+                                    <option value="alamat3">Jl. Merdeka No. 5 Kota Kediri</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className="mb-2 block text-sm font-medium text-gray-700">
+                                    Phone
+                                </label>
+                                <select
+                                    value={""}
+                                    onChange={(e) => setPhone(e.target.value)}
+                                    className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm focus:border-blue-600 focus:ring-4 focus:ring-blue-100"
+                                >
+                                    <option value="">Pilih Phone</option>
+                                    <option value="phone1">08123456789</option>
+                                    <option value="phone2">08987654321</option>
+                                    <option value="phone3">08781234567</option>
+                                </select>
+                            </div>
+
+                            <button
+                                type="submit"
+                                className="self-end rounded-xl bg-blue-600 px-6 py-3 text-sm font-medium text-white hover:bg-blue-700 transition"
+                            >
+                                Buat Order
+                            </button>
+                        </form>
                     </div>
-
-                    {orders.length === 0 && (
-                        <div className="p-4 text-sm text-slate-500">
-                            Belum ada order
-                        </div>
-                    )}
-
-                    {orders.map(o => (
-                        <div key={o.id} className="border-t p-4">
-                            <p className="font-medium">{o.layanan}</p>
-                            <p className="text-sm text-slate-500">
-                                {o.berat} kg • Rp {o.total.toLocaleString("id-ID")}
-                            </p>
-                        </div>
-                    ))}
                 </div>
-            </main>
+            </main >
         </div>
     )
 }
