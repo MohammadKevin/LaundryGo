@@ -2,25 +2,80 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #040d1a;
+  
+  --accent-gold: #bfa17a;
+  --accent-gold-bright: #e3cfa8;
+  --accent-sapphire: #0f365c;
+  
+  --card-bg: rgba(255, 255, 255, 0.9);
+  --card-border: rgba(191, 161, 122, 0.2);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-gold: var(--accent-gold);
+  --color-gold-bright: var(--accent-gold-bright);
+  --color-sapphire: var(--accent-sapphire);
+  
+  --font-sans: "Geist Sans", var(--font-geist-sans), ui-sans-serif, system-ui;
+  --font-mono: "Geist Mono", var(--font-geist-mono), ui-monospace, SFMono-Regular;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #020408;
+    --foreground: #f4f4f5;
+    
+    --card-bg: rgba(6, 11, 20, 0.7);
+    --card-border: rgba(227, 207, 168, 0.15);
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-sapphire);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-gold);
+}
+
+@keyframes textShine {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+.animate-text-shine {
+  background: linear-gradient(
+    to right,
+    var(--accent-gold) 20%,
+    var(--accent-gold-bright) 40%,
+    var(--accent-gold-bright) 60%,
+    var(--accent-gold) 80%
+  );
+  background-size: 200% auto;
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: textShine 3s linear infinite;
 }
